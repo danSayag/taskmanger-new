@@ -30,7 +30,7 @@ public class TaskController {
     }
 
     @RequestMapping(value = "/{taskId}", method = {RequestMethod.PUT , RequestMethod.POST})
-    public Task updateTask(@PathVariable Long taskId , @RequestBody Task newTask){
-        Task task = taskService.getTaskById(taskId, newTask);
+    public void updateTask(@RequestBody Task newTask, @PathVariable Long taskId){
+         taskService.updateTask(newTask ,taskId);
     }
 }
