@@ -1,0 +1,566 @@
+/* List view, modals, toast and empty state.
+   Loaded after style.css, which holds the base + board styles. */
+
+/* ================= shared buttons ================= */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    padding: 0 14px;
+    border: 1px solid #d9dce3;
+    border-radius: 7px;
+    background: #fff;
+    color: #3c4354;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: #f2f3f7;
+}
+
+.btn-primary {
+    border-color: transparent;
+    background: #3d5bdc;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: #304dcc;
+}
+
+.btn-danger {
+    border-color: transparent;
+    background: #e03131;
+    color: #fff;
+}
+
+.btn-danger:hover {
+    background: #c92a2a;
+}
+
+.btn-link {
+    border: none;
+    background: transparent;
+    color: #3159d9;
+    font-weight: 600;
+}
+
+.btn-link:hover {
+    background: transparent;
+    text-decoration: underline;
+}
+
+.btn-link-danger {
+    height: auto;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #e03131;
+    font-weight: 600;
+}
+
+.btn-link-danger:hover {
+    background: transparent;
+    text-decoration: underline;
+}
+
+/* #new-task-btn, .add-task and .card-menu are <a> elements on these pages */
+#new-task-btn {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.add-task {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.card-menu {
+    text-decoration: none;
+}
+
+/* ================= list view ================= */
+
+.list-view {
+    padding: 14px 16px 18px;
+}
+
+.list-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.list-toolbar .btn {
+    height: 28px;
+    font-weight: 400;
+    color: #626a78;
+}
+
+.list-toolbar .btn strong {
+    margin-left: 4px;
+    color: #1f2430;
+    font-weight: 600;
+}
+
+#result-count {
+    margin-left: auto;
+    font-size: 12px;
+    color: #8b93a1;
+}
+
+#task-list {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+}
+
+#task-list thead th {
+    padding: 8px 10px;
+    border-bottom: 1px solid #e4e7ee;
+    color: #9aa1ae;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: .6px;
+    text-align: left;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+#task-list tbody td {
+    padding: 10px;
+    border-bottom: 1px solid #eef0f5;
+    vertical-align: middle;
+}
+
+#task-list tbody tr:hover {
+    background: #f7f8fb;
+}
+
+.col-check {
+    width: 34px;
+}
+
+.col-actions {
+    width: 62px;
+    text-align: right;
+}
+
+.row-title {
+    margin: 0;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #1f2430;
+}
+
+.row-desc {
+    margin: 2px 0 0;
+    font-size: 11px;
+    color: #9aa1ae;
+}
+
+.cell-updated {
+    color: #8b93a1;
+}
+
+.cell-due.overdue {
+    color: #e03131;
+    font-weight: 600;
+}
+
+.cell-empty {
+    color: #b6bcc7;
+}
+
+.row-check {
+    width: 13px;
+    height: 13px;
+    accent-color: #3d5bdc;
+    cursor: pointer;
+}
+
+.row-action {
+    padding: 2px 3px;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    color: #9aa1ae;
+    font-size: 12px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.row-action:hover {
+    background: #eef0f5;
+    color: #3c4354;
+}
+
+/* status pills */
+
+.status {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .4px;
+}
+
+.status-todo {
+    background: #eef0f5;
+    color: #626a78;
+}
+
+.status-inprogress {
+    background: #e7edfd;
+    color: #3159d9;
+}
+
+.status-done {
+    background: #e6f6ec;
+    color: #1f8b58;
+}
+
+tr.is-done .row-title {
+    color: #9aa1ae;
+    text-decoration: line-through;
+}
+
+/* list footer */
+
+.list-footer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-top: 12px;
+    font-size: 12px;
+    color: #626a78;
+}
+
+.rows-per-page select {
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    color: #1f2430;
+    cursor: pointer;
+}
+
+.pager {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+}
+
+.pager a {
+    padding: 3px 7px;
+    border-radius: 5px;
+    color: #626a78;
+    text-decoration: none;
+}
+
+.pager a:hover {
+    background: #eef0f5;
+}
+
+.pager a.is-current {
+    color: #3159d9;
+    font-weight: 700;
+}
+
+/* ================= modals ================= */
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal:target {
+    display: flex;
+}
+
+.modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(31, 36, 48, .45);
+}
+
+.dialog {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    padding: 18px 20px 16px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 18px 40px rgba(20, 26, 45, .28);
+}
+
+.dialog-head {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 14px;
+}
+
+.dialog-head h2 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.dialog-close {
+    margin-left: auto;
+    color: #9aa1ae;
+    font-size: 15px;
+    line-height: 1;
+    text-decoration: none;
+}
+
+.dialog-close:hover {
+    color: #3c4354;
+}
+
+.dialog-foot {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.dialog-foot .spacer {
+    margin-left: auto;
+}
+
+/* confirm dialog */
+
+.dialog-confirm {
+    max-width: 330px;
+}
+
+.dialog-confirm .dialog-head {
+    margin-bottom: 8px;
+}
+
+.dialog-confirm p {
+    margin: 0;
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: #626a78;
+}
+
+/* ================= form ================= */
+
+.field {
+    margin-bottom: 12px;
+}
+
+.field > label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #3c4354;
+}
+
+.field .req {
+    color: #e03131;
+}
+
+.field input[type="text"],
+.field input[type="date"],
+.field textarea,
+.field select {
+    width: 100%;
+    padding: 7px 9px;
+    border: 1px solid #d9dce3;
+    border-radius: 7px;
+    background: #fff;
+    font-family: inherit;
+    font-size: 12.5px;
+    color: #1f2430;
+    outline: none;
+}
+
+.field textarea {
+    min-height: 58px;
+    resize: vertical;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+    border-color: #3d5bdc;
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+    color: #b6bcc7;
+}
+
+.field.has-error input,
+.field.has-error textarea {
+    border-color: #e03131;
+}
+
+.field-error {
+    margin: 4px 0 0;
+    font-size: 10.5px;
+    color: #e03131;
+}
+
+.field-row {
+    display: flex;
+    gap: 10px;
+}
+
+.field-row .field {
+    flex: 1;
+}
+
+/* segmented control */
+
+.segmented {
+    display: flex;
+    border: 1px solid #d9dce3;
+    border-radius: 7px;
+    overflow: hidden;
+}
+
+.segmented input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.segmented label {
+    flex: 1;
+    margin: 0;
+    padding: 6px 0;
+    border-left: 1px solid #d9dce3;
+    font-size: 11.5px;
+    color: #626a78;
+    text-align: center;
+    cursor: pointer;
+}
+
+.segmented label:first-of-type {
+    border-left: none;
+}
+
+.segmented input:checked + label {
+    background: #e7edfd;
+    color: #3159d9;
+    font-weight: 600;
+}
+
+.form-meta {
+    margin: 2px 0 0;
+    font-size: 10.5px;
+    color: #9aa1ae;
+}
+
+/* ================= toast ================= */
+
+.toast {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 14px;
+    border-radius: 7px;
+    background: #1f2430;
+    color: #fff;
+    font-size: 12px;
+    box-shadow: 0 8px 20px rgba(20, 26, 45, .3);
+}
+
+.toast::before {
+    content: "\2713";
+    color: #6ee7a8;
+}
+
+/* a toast that only appears once its id is the target */
+.toast-target {
+    display: none;
+}
+
+.toast-target:target {
+    display: flex;
+}
+
+/* ================= empty state ================= */
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 70px 20px 80px;
+    text-align: center;
+}
+
+.empty-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    margin-bottom: 8px;
+    border-radius: 11px;
+    background: #e7edfd;
+    color: #3d5bdc;
+    font-size: 20px;
+}
+
+.empty-state h2 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.empty-state p {
+    margin: 0;
+    font-size: 12.5px;
+    color: #8b93a1;
+}
+
+.empty-state .btn {
+    margin-top: 10px;
+}
+
+.empty-hint {
+    margin-top: 16px;
+    font-size: 11.5px;
+    color: #9aa1ae;
+}
+
+/* ================= responsive ================= */
+
+@media (max-width: 860px) {
+    .list-toolbar {
+        flex-wrap: wrap;
+    }
+
+    #task-list .col-hide {
+        display: none;
+    }
+}

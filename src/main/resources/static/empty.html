@@ -1,0 +1,89 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tasks &middot; Empty</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/screens.css">
+</head>
+
+<body>
+
+<div class="container">
+    <div class="board">
+        <div class="topbar">
+            <label id="task-label">Tasks</label>
+            <a href="./index.html" class="view-tab is-active">Board</a>
+            <a href="./list.html" class="view-tab">List</a>
+            <input type="search" id="search" placeholder="Search tasks...">
+            <a href="#new-task" id="new-task-btn" class="btn btn-primary">+ New task</a>
+        </div>
+
+        <div class="board-view">
+            <div class="empty-state">
+                <span class="empty-icon">&#10003;</span>
+                <h2>No tasks yet</h2>
+                <p>Create your first task to get started.</p>
+                <a href="#new-task" class="btn btn-primary">+ New task</a>
+
+                <p class="empty-hint">
+                    Filtered with no results &rarr; &ldquo;No tasks match your filters&rdquo;
+                    <a href="./index.html" class="btn btn-link">Clear filters</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ New task modal ============ -->
+<div class="modal" id="new-task">
+    <a class="modal-backdrop" href="#"></a>
+    <div class="dialog">
+        <div class="dialog-head">
+            <h2>New task</h2>
+            <a class="dialog-close" href="#">&#10005;</a>
+        </div>
+
+        <div class="field has-error">
+            <label for="new-title">Title <span class="req">*</span></label>
+            <input type="text" id="new-title">
+            <p class="field-error">Title is required</p>
+        </div>
+
+        <div class="field">
+            <label for="new-desc">Description</label>
+            <textarea id="new-desc" placeholder="Optional details&hellip;"></textarea>
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <label for="new-status">Status</label>
+                <select id="new-status">
+                    <option>TODO</option>
+                    <option>IN PROGRESS</option>
+                    <option>DONE</option>
+                </select>
+            </div>
+            <div class="field">
+                <label for="new-priority">Priority</label>
+                <select id="new-priority">
+                    <option>LOW</option>
+                    <option selected>MEDIUM</option>
+                    <option>HIGH</option>
+                </select>
+            </div>
+            <div class="field">
+                <label for="new-due">Due date</label>
+                <input type="date" id="new-due">
+            </div>
+        </div>
+
+        <div class="dialog-foot">
+            <a href="#" class="btn spacer">Cancel</a>
+            <button type="button" class="btn btn-primary">Create task</button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
