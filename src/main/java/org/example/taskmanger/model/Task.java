@@ -17,6 +17,7 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long taskId;
 
+    @Enumerated(EnumType.STRING)
     private Priority priority;
 
     @Column(unique = true)

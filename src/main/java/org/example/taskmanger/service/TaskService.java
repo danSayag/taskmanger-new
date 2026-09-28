@@ -51,7 +51,9 @@ public class TaskService {
         taskRepository.save(newTask);
     }
 
-    public void deleteTask(Task task){
+    public void deleteTask(Long taskId){
+        Task task = taskRepository.findById(taskId).orElseThrow(() -> new TaskNotFoundException(taskId));
+        
         taskRepository.delete(task);
     }
 

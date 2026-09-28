@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,17 @@ public class JwtService {
     private String secretKey;
     @Value("${security.jwt.expiration-time}")
     private long jwtExpiration;
+
+    // Fail at startup instead of on every login if the key is missing or too short
+    @PostConstruct
+    void validateSecretKey() {
+        try {
+            getSignInKey();
+        } catch (RuntimeException e) {
+            throw new IllegalStateException(
+                    "JWT_SECRET_KEY is invalid: it must be base64 of at least 32 bytes (generate one with: openssl rand -base64 32)", e);
+        }
+    }
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);

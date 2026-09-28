@@ -3,14 +3,14 @@ package org.example.taskmanger.config;
 import org.example.taskmanger.model.User;
 import org.example.taskmanger.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
+import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-// Creates the default admin account on startup if it doesn't exist yet
+// Creates the default admin account on startup if it doesn't exist yet.
+// Runs before the web server starts, so logins never race the seeding.
 @Component
-public class AdminUserInitializer implements ApplicationRunner {
+public class AdminUserInitializer implements SmartInitializingSingleton {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -28,7 +28,7 @@ public class AdminUserInitializer implements ApplicationRunner {
     }
 
     @Override
-    public void run(ApplicationArguments args) {
+    public void afterSingletonsInstantiated() {
         if (userRepository.findByEmailOrUsername(adminEmail, adminUsername).isPresent()) {
             return;
         }
