@@ -13,9 +13,9 @@ import java.util.Date;
 @Table(name = "tasks")
 public class Task {
 
-    @id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long taskId;
 
     private Priority priority;
 
