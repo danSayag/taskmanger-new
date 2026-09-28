@@ -30,6 +30,18 @@
     color: #fff;
 }
 
+.btn-update {
+    border-color: transparent;
+    background: grey;
+    color: #fff;
+}
+
+.btn-update:hover {
+    background: white;
+    color: grey;
+    border: solid grey 1px;
+}
+
 .btn-primary:hover {
     background: #304dcc;
 }

@@ -17,7 +17,7 @@ import java.util.List;
 public class User implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(unique = true , nullable = false)
@@ -45,6 +45,17 @@ public class User implements UserDetails {
         this.username = username;
         this.password = password;
         this.email = email;
+    }
+
+    // Spring Security identifies users by this value; we log in with email,
+    // so it must match what UserDetailsService looks up and what the JWT subject holds.
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    public String getDisplayName() {
+        return username;
     }
 
     @Override
