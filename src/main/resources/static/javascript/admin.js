@@ -31,6 +31,7 @@ function rowHtml(user) {
         </select>
       </td>
       <td class="col-actions">
+        ${isMe ? '' : `<a href="./messages.html#user=${user.id}" class="row-action" title="Send a message">&#9993;</a>`}
         ${isMe ? '' : `<a href="#" class="row-action delete-user" data-id="${user.id}" title="Delete user">&#128465;</a>`}
       </td>
     </tr>`
