@@ -131,13 +131,13 @@
     color: #8b93a1;
 }
 
-#task-list {
+#task-list, #user-list {
     width: 100%;
     border-collapse: collapse;
     font-size: 12.5px;
 }
 
-#task-list thead th {
+#task-list thead th, #user-list thead th {
     padding: 8px 10px;
     border-bottom: 1px solid #e4e7ee;
     color: #9aa1ae;
@@ -149,13 +149,13 @@
     white-space: nowrap;
 }
 
-#task-list tbody td {
+#task-list tbody td, #user-list tbody td {
     padding: 10px;
     border-bottom: 1px solid #eef0f5;
     vertical-align: middle;
 }
 
-#task-list tbody tr:hover {
+#task-list tbody tr:hover, #user-list tbody tr:hover {
     background: #f7f8fb;
 }
 
@@ -572,7 +572,7 @@ tr.is-done .row-title {
         flex-wrap: wrap;
     }
 
-    #task-list .col-hide {
+    #task-list .col-hide, #user-list .col-hide {
         display: none;
     }
 }

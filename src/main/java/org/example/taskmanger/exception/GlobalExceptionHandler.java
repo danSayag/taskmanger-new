@@ -1,4 +1,4 @@
-package org.example.taskmanger.exeptions;
+package org.example.taskmanger.exception;
 
 import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
@@ -31,6 +31,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(TaskNotFoundException.class)
     public ProblemDetail handleTaskNotFound(TaskNotFoundException e) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ProblemDetail handleUserNotFound(UserNotFoundException e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+
+    @ExceptionHandler(PriorityNotChangedException.class)
+    public ProblemDetail handlePriorityNotChanged(PriorityNotChangedException e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

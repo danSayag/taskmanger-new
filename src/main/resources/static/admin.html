@@ -1,0 +1,98 @@
+<html>
+<head>
+    <script src="./javascript/guard.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tasks &middot; Users</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/screens.css">
+</head>
+
+<body>
+
+<div class="container">
+    <div class="board">
+        <div class="topbar">
+            <label id="task-label">Tasks</label>
+            <a href="./index.html" class="view-tab">Board</a>
+            <a href="./list.html" class="view-tab">List</a>
+            <input type="search" id="search" placeholder="Search users...">
+            <a href="#new-user" id="new-task-btn" class="btn btn-primary">+ New user</a>
+            <button type="button" class="btn" id="logout-btn" onclick="logout()">Log out</button>
+        </div>
+
+        <div class="list-view">
+
+            <div class="list-toolbar">
+                <div class="filter-pill">
+                    <span>Role</span>
+                    <select id="role-filter">
+                        <option value="all">All</option>
+                        <option value="ADMIN">Admin</option>
+                        <option value="USER">User</option>
+                    </select>
+                </div>
+                <span id="result-count">0 users</span>
+            </div>
+
+            <table id="user-list">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Tasks</th>
+                        <th>Role</th>
+                        <th class="col-actions"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ============ New user modal ============ -->
+<div class="modal" id="new-user">
+    <a class="modal-backdrop" href="#"></a>
+    <div class="dialog">
+        <div class="dialog-head">
+            <h2>New user</h2>
+            <a class="dialog-close" href="#">&#10005;</a>
+        </div>
+
+        <div class="field">
+            <label for="new-username">Username <span class="req">*</span></label>
+            <input type="text" id="new-username" autocomplete="off">
+        </div>
+
+        <div class="field">
+            <label for="new-email">Email <span class="req">*</span></label>
+            <input type="text" id="new-email" autocomplete="off">
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <label for="new-password">Password <span class="req">*</span></label>
+                <input type="text" id="new-password" autocomplete="off" placeholder="At least 8 characters">
+            </div>
+            <div class="field">
+                <label for="new-role">Role</label>
+                <select id="new-role">
+                    <option value="USER" selected>USER</option>
+                    <option value="ADMIN">ADMIN</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="dialog-foot">
+            <a href="#" class="btn spacer">Cancel</a>
+            <button type="button" class="btn btn-primary" onclick="submitNewUser()">Create user</button>
+        </div>
+    </div>
+</div>
+
+<script src="./javascript/common.js"></script>
+<script src="./javascript/admin.js"></script>
+</body>
+</html>

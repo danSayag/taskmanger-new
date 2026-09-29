@@ -243,6 +243,16 @@ body {
     cursor: pointer;
 }
 
+.badge-button {
+    border: none;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.badge-button:hover {
+    filter: brightness(.93);
+}
+
 .task-card.is-dragging {
     opacity: .4;
 }
@@ -375,4 +385,27 @@ body {
     #new-task-btn {
         margin-left: auto;
     }
+}
+
+#logout-btn {
+    margin-left: 8px;
+    cursor: pointer;
+}
+
+.owner-tag {
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: #eef0f5;
+    color: #626a78;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.role-select {
+    padding: 4px 6px;
+    border: 1px solid #d9dce3;
+    border-radius: 6px;
+    background: #fff;
+    font-family: inherit;
+    font-size: 12px;
 }

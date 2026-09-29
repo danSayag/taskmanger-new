@@ -1,4 +1,4 @@
-package org.example.taskmanger.exeptions;
+package org.example.taskmanger.exception;
 
 public class UserNotFoundException extends RuntimeException {
     public UserNotFoundException(String message) {
