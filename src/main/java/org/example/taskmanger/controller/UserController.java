@@ -1,4 +1,4 @@
-package org.example.taskmanger.conroller;
+package org.example.taskmanger.controller;
 
 import jakarta.validation.Valid;
 import org.example.taskmanger.dto.ChangeRoleDto;

@@ -2,8 +2,6 @@ package org.example.taskmanger.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -37,10 +35,8 @@ public class Task {
 
 
 
-    // never serialized: it would expose the owner's password hash
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonIgnore
     private User owner;
 
 
@@ -72,17 +68,5 @@ public class Task {
         this.priority = priority;
         this.dueDate = dueDate;
         this.status = status;
-    }
-
-
-
-
-
-
-
-    // shown to admins on the board and list pages
-    @JsonProperty("ownerName")
-    public String getOwnerName() {
-        return owner == null ? null : owner.getDisplayName();
     }
 }

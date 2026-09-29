@@ -80,7 +80,17 @@ After that, admins can create more admins from the admin panel.
 
 ## API
 
-All endpoints except `/auth/**` need an `Authorization: Bearer <token>` header. Errors are returned as RFC 7807 `ProblemDetail` JSON.
+All endpoints except `/auth/**` need an `Authorization: Bearer <token>` header.
+
+Errors are returned as RFC 7807 `ProblemDetail` JSON by a global exception handler:
+
+| Status | When |
+|---|---|
+| `400` | Validation failed (with an `errors` map of field → message), malformed JSON, or an invalid value such as an unknown priority |
+| `401` | Missing, invalid or expired token, or wrong login details |
+| `403` | Not allowed, e.g. a regular user calling `/admin/**` |
+| `404` | Task or user not found (including another user's task) |
+| `409` | Duplicate data, e.g. two tasks with the same title for one user |
 
 ### Auth
 
@@ -96,12 +106,17 @@ Regular users only see and change their own tasks; admins see all of them.
 | Method | Path | Description |
 |---|---|---|
 | `GET` | `/task` | List tasks |
-| `POST` | `/task` | Create a task. Body: `{ "title", "description", "priority", "status", "dueDate" }`. Admins can add `?ownerId=<id>` to create it for another user |
+| `GET` | `/task/{taskId}` | Get one task |
+| `POST` | `/task` | Create a task (`201`). Body: `{ "title", "description", "priority", "status", "dueDate" }`. Admins can add `?ownerId=<id>` to create it for another user |
 | `PUT` | `/task/{taskId}` | Update a task (same body) |
-| `DELETE` | `/task/{taskId}` | Delete a task |
-| `POST` | `/task/{taskId}/{priority}` | Change a task's priority |
+| `DELETE` | `/task/{taskId}` | Delete a task (`204`) |
+| `PATCH` | `/task/{taskId}/priority` | Change a task's priority. Body: `{ "priority" }` |
 | `GET` | `/task/priority/{priority}` | Tasks with that priority |
 | `GET` | `/task/due/{yyyy-MM-dd}` | Tasks due on or before that date |
+
+Task request body rules: `title` is required (max 255 characters), `description` is optional (max 2000), `priority` and `dueDate` (`yyyy-MM-dd`) are required, `status` defaults to `TODO`.
+
+Tasks are returned as `{ "taskId", "title", "description", "priority", "status", "dueDate", "ownerName" }`.
 
 ### Users
 
@@ -141,8 +156,8 @@ Interactive API docs are at `http://localhost:8080/swagger-ui.html` while the ap
 ```
 src/main/java/org/example/taskmanger/
 ├── config/       Security, JWT filter, optional admin account setup
-├── conroller/    REST controllers (auth, tasks, users)
-├── dto/          Request/response records
+├── controller/   REST controllers (auth, tasks, users)
+├── dto/          Request/response records (entities are never exposed by the API)
 ├── exception/    Custom exceptions and the global error handler
 ├── model/        JPA entities and enums (User, Task, Role, Priority, Status)
 ├── repository/   Spring Data repositories
@@ -169,6 +184,4 @@ src/main/resources/
 
 - **Messages backend:** the endpoints listed above.
 - **Email verification:** the `verification_code` columns and the mail starter exist, but new accounts are enabled right away (see the TODO in `AuthenticationService`).
-- **Clearer error for duplicate task titles:** creating a second task with the same title currently returns a `500`.
-- **Validation on the task request body** (e.g. `@Valid`).
 - **Tests:** only the default Spring Boot context test exists.

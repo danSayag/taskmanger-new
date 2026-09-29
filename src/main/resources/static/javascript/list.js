@@ -25,7 +25,7 @@ function visibleTasks() {
   const tasks = allTasks.filter(task =>
     (status === 'all' || statusKey(task) === status) && matchesSearch(task))
 
-  const byDue = (a, b) => new Date(a.dueDate) - new Date(b.dueDate)
+  const byDue = (a, b) => parseDate(a.dueDate) - parseDate(b.dueDate)
   const compare = {
     'due-asc': byDue,
     'due-desc': (a, b) => byDue(b, a),

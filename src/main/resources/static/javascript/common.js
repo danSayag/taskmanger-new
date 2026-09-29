@@ -7,7 +7,7 @@ const API_URL = BASE_URL + '/task'
 // Backend endpoints, relative to API_URL
 const PRIORITY_PATH = priority => `/priority/${priority}`           // GET  -> getTasksByPriority
 const DUE_PATH = date => `/due/${date}`                             // GET  -> getTaskUpToADueDate
-const CHANGE_PRIORITY_PATH = (id, priority) => `/${id}/${priority}` // POST -> changeCategory
+const CHANGE_PRIORITY_PATH = id => `/${id}/priority`               // PATCH {priority} -> changePriority
 
 let allTasks = []
 let editingId = null
@@ -41,10 +41,16 @@ async function request(url, options = {}) {
   }
   if (!response.ok) {
     const text = await response.text()
-    throw new Error(`Server responded ${response.status}: ${text}`)
+    const error = new Error(`Server responded ${response.status}: ${text}`)
+    // the backend answers with ProblemDetail JSON; keep its message for alerts
+    try {
+      error.detail = JSON.parse(text).detail
+    } catch (ignored) {
+    }
+    throw error
   }
 
-  // POST/PUT/DELETE return no body
+  // some responses (e.g. DELETE's 204) have no body
   const text = await response.text()
   return text ? JSON.parse(text) : true
 }
@@ -139,8 +145,16 @@ function escapeHtml(text) {
   return div.innerHTML
 }
 
+// Due dates come from the API as "yyyy-MM-dd"; read them as local dates
+// (new Date("2026-09-30") would mean UTC midnight, the previous day west of UTC)
+function parseDate(value) {
+  return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)
+    ? new Date(`${value}T00:00:00`)
+    : new Date(value)
+}
+
 function formatDate(value) {
-  return new Date(value).toLocaleDateString('en-US', {month: 'short', day: 'numeric'})
+  return parseDate(value).toLocaleDateString('en-US', {month: 'short', day: 'numeric'})
 }
 
 // 'todo' | 'inprogress' | 'done'; tasks without a status count as 'todo'
@@ -150,7 +164,7 @@ function statusKey(task) {
 }
 
 function isOverdue(task) {
-  return statusKey(task) !== 'done' && new Date(task.dueDate) < startOfToday()
+  return statusKey(task) !== 'done' && parseDate(task.dueDate) < startOfToday()
 }
 
 function matchesSearch(task) {
@@ -184,7 +198,7 @@ async function submitNewTask() {
     })
   } catch (err) {
     console.error('Error creating task', err)
-    alert('Could not create task (is the title already used?)')
+    alert(`Could not create task: ${err.detail || err.message}`)
     return
   }
 
@@ -237,7 +251,7 @@ async function submitEditTask() {
     })
   } catch (err) {
     console.error('Error updating task', err)
-    alert('Could not update task')
+    alert(`Could not update task: ${err.detail || err.message}`)
     return
   }
 
@@ -250,7 +264,8 @@ async function setStatus(taskId, status) {
   const task = allTasks.find(t => t.taskId === taskId)
   if (!task) return false
   try {
-    await api(`/${taskId}`, {method: 'PUT', body: JSON.stringify({...task, status})})
+    const {title, description, priority, dueDate} = task
+    await api(`/${taskId}`, {method: 'PUT', body: JSON.stringify({title, description, priority, status, dueDate})})
   } catch (err) {
     console.error('Error changing status', err)
     alert('Could not change the task status')
@@ -283,7 +298,7 @@ async function cyclePriority(taskId) {
   const next = NEXT_PRIORITY[task.priority] || 'MEDIUM'
 
   try {
-    await api(CHANGE_PRIORITY_PATH(taskId, next), {method: 'POST'})
+    await api(CHANGE_PRIORITY_PATH(taskId), {method: 'PATCH', body: JSON.stringify({priority: next})})
   } catch (err) {
     console.error('Error changing priority', err)
     alert('Could not change the priority')
