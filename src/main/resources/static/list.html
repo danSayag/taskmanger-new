@@ -1,5 +1,6 @@
 <html>
 <head>
+    <script src="./javascript/guard.js"></script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Tasks &middot; List</title>
@@ -15,7 +16,7 @@
             <label id="task-label">Tasks</label>
             <a href="./index.html" class="view-tab">Board</a>
             <a href="./list.html" class="view-tab is-active">List</a>
-            <input type="search" id="search" value="flyway" placeholder="Search tasks...">
+            <input type="search" id="search" placeholder="Search tasks...">
             <a href="#new-task" id="new-task-btn" class="btn btn-primary">+ New task</a>
         </div>
 
@@ -26,7 +27,7 @@
                 <button class="btn" type="button">Priority <strong>All</strong> &#9662;</button>
                 <button class="btn" type="button">Sort <strong>Due date</strong> &#8593;</button>
                 <a href="./list.html" class="btn btn-link">Clear filters</a>
-                <span id="result-count">Showing 1&ndash;7 of 9</span>
+                <span id="result-count">Showing 0 of 0</span>
             </div>
 
             <table id="task-list">
@@ -42,108 +43,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td class="col-check"><input type="checkbox" class="row-check"></td>
-                        <td>
-                            <p class="row-title">Search &amp; filter endpoint</p>
-                            <p class="row-desc">JPA Specification for q, status, priority</p>
-                        </td>
-                        <td><span class="status status-inprogress">IN PROGRESS</span></td>
-                        <td><span class="badge badge-high">HIGH</span></td>
-                        <td class="cell-due overdue">Sep 26</td>
-                        <td class="cell-updated col-hide">2h ago</td>
-                        <td class="col-actions">
-                            <a href="#edit-task" class="row-action" title="Edit">&#9998;</a>
-                            <a href="#delete-task" class="row-action" title="Delete">&#128465;</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-check"><input type="checkbox" class="row-check"></td>
-                        <td>
-                            <p class="row-title">Add Flyway V1 migration</p>
-                            <p class="row-desc">Create the tasks table schema</p>
-                        </td>
-                        <td><span class="status status-todo">TODO</span></td>
-                        <td><span class="badge badge-high">HIGH</span></td>
-                        <td class="cell-due">Sep 29</td>
-                        <td class="cell-updated col-hide">1d ago</td>
-                        <td class="col-actions">
-                            <a href="#edit-task" class="row-action" title="Edit">&#9998;</a>
-                            <a href="#delete-task" class="row-action" title="Delete">&#128465;</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-check"><input type="checkbox" class="row-check"></td>
-                        <td>
-                            <p class="row-title">Service unit tests</p>
-                            <p class="row-desc">Mockito tests for TaskService</p>
-                        </td>
-                        <td><span class="status status-inprogress">IN PROGRESS</span></td>
-                        <td><span class="badge badge-medium">MEDIUM</span></td>
-                        <td class="cell-due">Sep 30</td>
-                        <td class="cell-updated col-hide">3h ago</td>
-                        <td class="col-actions">
-                            <a href="#edit-task" class="row-action" title="Edit">&#9998;</a>
-                            <a href="#delete-task" class="row-action" title="Delete">&#128465;</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-check"><input type="checkbox" class="row-check"></td>
-                        <td>
-                            <p class="row-title">Write README setup section</p>
-                            <p class="row-desc">H2 and Postgres instructions</p>
-                        </td>
-                        <td><span class="status status-todo">TODO</span></td>
-                        <td><span class="badge badge-medium">MEDIUM</span></td>
-                        <td class="cell-due">Oct 2</td>
-                        <td class="cell-updated col-hide">1d ago</td>
-                        <td class="col-actions">
-                            <a href="#edit-task" class="row-action" title="Edit">&#9998;</a>
-                            <a href="#delete-task" class="row-action" title="Delete">&#128465;</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-check"><input type="checkbox" class="row-check"></td>
-                        <td>
-                            <p class="row-title">Dockerfile</p>
-                        </td>
-                        <td><span class="status status-todo">TODO</span></td>
-                        <td><span class="badge badge-low">LOW</span></td>
-                        <td class="cell-due">Oct 10</td>
-                        <td class="cell-updated col-hide">2d ago</td>
-                        <td class="col-actions">
-                            <a href="#edit-task" class="row-action" title="Edit">&#9998;</a>
-                            <a href="#delete-task" class="row-action" title="Delete">&#128465;</a>
-                        </td>
-                    </tr>
-                    <tr class="is-done">
-                        <td class="col-check"><input type="checkbox" class="row-check" checked></td>
-                        <td>
-                            <p class="row-title">CRUD controller</p>
-                        </td>
-                        <td><span class="status status-done">DONE</span></td>
-                        <td><span class="badge badge-high">HIGH</span></td>
-                        <td class="cell-due cell-empty">&mdash;</td>
-                        <td class="cell-updated col-hide">4d ago</td>
-                        <td class="col-actions">
-                            <a href="#edit-task" class="row-action" title="Edit">&#9998;</a>
-                            <a href="#delete-task" class="row-action" title="Delete">&#128465;</a>
-                        </td>
-                    </tr>
-                    <tr class="is-done">
-                        <td class="col-check"><input type="checkbox" class="row-check" checked></td>
-                        <td>
-                            <p class="row-title">Task entity + enums</p>
-                        </td>
-                        <td><span class="status status-done">DONE</span></td>
-                        <td><span class="badge badge-medium">MEDIUM</span></td>
-                        <td class="cell-due cell-empty">&mdash;</td>
-                        <td class="cell-updated col-hide">5d ago</td>
-                        <td class="col-actions">
-                            <a href="#edit-task" class="row-action" title="Edit">&#9998;</a>
-                            <a href="#delete-task" class="row-action" title="Delete">&#128465;</a>
-                        </td>
-                    </tr>
                 </tbody>
             </table>
 
@@ -176,7 +75,7 @@
             <a class="dialog-close" href="#">&#10005;</a>
         </div>
 
-        <div class="field has-error">
+        <div class="field">
             <label for="new-title">Title <span class="req">*</span></label>
             <input type="text" id="new-title">
             <p class="field-error">Title is required</p>
@@ -228,12 +127,12 @@
 
         <div class="field">
             <label for="edit-title">Title <span class="req">*</span></label>
-            <input type="text" id="edit-title" value="Service unit tests">
+            <input type="text" id="edit-title">
         </div>
 
         <div class="field">
             <label for="edit-desc">Description</label>
-            <textarea id="edit-desc">Mockito tests for TaskService.</textarea>
+            <textarea id="edit-desc"></textarea>
         </div>
 
         <div class="field">
@@ -262,11 +161,11 @@
             </div>
             <div class="field">
                 <label for="edit-due">Due date</label>
-                <input type="date" id="edit-due" value="2026-09-30">
+                <input type="date" id="edit-due">
             </div>
         </div>
 
-        <p class="form-meta">Created Sep 24 &middot; Updated 3h ago</p>
+        <p class="form-meta"></p>
 
         <div class="dialog-foot">
             <a href="#delete-task" class="btn btn-link-danger">Delete</a>
@@ -283,7 +182,7 @@
         <div class="dialog-head">
             <h2>Delete task?</h2>
         </div>
-        <p>&ldquo;Dockerfile&rdquo; will be permanently deleted. This can&rsquo;t be undone.</p>
+        <p>This task will be permanently deleted. This can&rsquo;t be undone.</p>
         <div class="dialog-foot">
             <a href="#" class="btn spacer">Cancel</a>
             <a href="#deleted" class="btn btn-danger">Delete</a>
@@ -293,7 +192,7 @@
 
 
 <!-- ============ Success toast (shown after Delete) ============ -->
-<div class="toast toast-target" id="deleted">Task &ldquo;Swagger UI&rdquo; deleted</div>
+<div class="toast toast-target" id="deleted">Task deleted</div>
 
 </body>
 </html>

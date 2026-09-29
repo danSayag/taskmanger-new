@@ -243,6 +243,15 @@ body {
     cursor: pointer;
 }
 
+.task-card.is-dragging {
+    opacity: .4;
+}
+
+.column.drop-target {
+    border-color: #3d5bdc;
+    background: #e8ecfb;
+}
+
 .task-card:hover {
     border-color: #ccd5f5;
     box-shadow: 0 2px 6px rgba(25, 32, 56, .09);

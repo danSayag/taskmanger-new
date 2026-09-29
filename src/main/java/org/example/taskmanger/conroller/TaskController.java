@@ -1,7 +1,6 @@
 package org.example.taskmanger.conroller;
 
 import org.example.taskmanger.model.Task;
-import org.example.taskmanger.repository.TaskRepository;
 import org.example.taskmanger.service.TaskService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
