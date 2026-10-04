@@ -1,4 +1,5 @@
-const AUTH_URL = 'http://localhost:8080/auth'
+// same origin as the page, so it works locally and when deployed
+const AUTH_URL = '/auth'
 
 const errorBox = document.getElementById('auth-error')
 

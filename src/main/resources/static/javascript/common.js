@@ -1,7 +1,8 @@
 // Shared by the Board (script.js) and List (list.js) pages.
 // Each page defines its own loadTasks(), which the functions below call after a change.
 
-const BASE_URL = 'http://localhost:8080'
+// same origin as the page, so it works locally and when deployed
+const BASE_URL = ''
 const API_URL = BASE_URL + '/task'
 
 // Backend endpoints, relative to API_URL
