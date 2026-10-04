@@ -2,8 +2,9 @@
 <head>
     <script src="./javascript/guard.js"></script>
     <meta charset="utf-8">
+    <script src="./javascript/i18n.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Tasks &middot; Messages</title>
+    <title data-i18n="title.messages">Tasks &middot; Messages</title>
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/screens.css">
     <link rel="stylesheet" href="./css/messages.css">
@@ -14,12 +15,12 @@
 <div class="container">
     <div class="board">
         <div class="topbar">
-            <label id="task-label">Tasks</label>
-            <a href="./index.html" class="view-tab">Board</a>
-            <a href="./list.html" class="view-tab">List</a>
-            <a href="./messages.html" class="view-tab is-active">Messages</a>
-            <input type="search" id="search" placeholder="Search conversations...">
-            <button type="button" class="btn" id="logout-btn" onclick="logout()">Log out</button>
+            <label id="task-label" data-i18n="nav.brand">Tasks</label>
+            <a href="./index.html" class="view-tab" data-i18n="nav.board">Board</a>
+            <a href="./list.html" class="view-tab" data-i18n="nav.list">List</a>
+            <a href="./messages.html" class="view-tab is-active" data-i18n="nav.messages">Messages</a>
+            <input type="search" id="search" placeholder="Search conversations..." data-i18n-placeholder="search.conversations">
+            <button type="button" class="btn" id="logout-btn" onclick="logout()" data-i18n="nav.logout">Log out</button>
         </div>
 
         <div class="messages-view" id="messages-view">
@@ -27,9 +28,9 @@
             <!-- conversation list -->
             <aside class="conversations">
                 <div class="conversations-head">
-                    <h2>Conversations</h2>
-                    <select id="new-conversation" title="Start a new conversation">
-                        <option value="">+ New message</option>
+                    <h2 data-i18n="msg.conversations">Conversations</h2>
+                    <select id="new-conversation" title="Start a new conversation" data-i18n-title="msg.startNew">
+                        <option value="" data-i18n="msg.newMessage">+ New message</option>
                     </select>
                 </div>
                 <ul id="conversation-list"></ul>
@@ -39,12 +40,12 @@
             <section class="thread" id="thread">
                 <div class="thread-empty" id="thread-empty">
                     <span class="empty-icon">&#9993;</span>
-                    <h2>No conversation selected</h2>
-                    <p>Pick a conversation, or start a new one with &ldquo;+ New message&rdquo;.</p>
+                    <h2 data-i18n="msg.noneSelected">No conversation selected</h2>
+                    <p data-i18n="msg.pickHint">Pick a conversation, or start a new one with &ldquo;+ New message&rdquo;.</p>
                 </div>
 
                 <header class="thread-head" id="thread-head" hidden>
-                    <button type="button" class="btn thread-back" id="thread-back">&#8249; Back</button>
+                    <button type="button" class="btn thread-back" id="thread-back" data-i18n="btn.back">&#8249; Back</button>
                     <span class="avatar" id="thread-avatar"></span>
                     <h2 id="thread-name"></h2>
                 </header>
@@ -53,12 +54,12 @@
 
                 <form class="compose" id="compose" hidden>
                     <textarea id="compose-text" rows="1" maxlength="2000"
-                              placeholder="Write a message&hellip; (Enter to send, Shift+Enter for a new line)"></textarea>
-                    <button type="submit" class="btn btn-primary" id="compose-send">Send</button>
+                              placeholder="Write a message&hellip; (Enter to send, Shift+Enter for a new line)" data-i18n-placeholder="msg.placeholder"></textarea>
+                    <button type="submit" class="btn btn-primary" id="compose-send" data-i18n="btn.send">Send</button>
                 </form>
             </section>
 
-            <p class="messages-unavailable" id="messages-unavailable" hidden>
+            <p class="messages-unavailable" id="messages-unavailable" data-i18n="msg.unavailable" hidden>
                 Messaging isn&rsquo;t available yet &mdash; the server doesn&rsquo;t have the message endpoints.
             </p>
         </div>

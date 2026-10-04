@@ -1,8 +1,9 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <script src="./javascript/i18n.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Tasks &middot; Sign up</title>
+    <title data-i18n="title.signup">Tasks &middot; Sign up</title>
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/screens.css">
     <link rel="stylesheet" href="./css/auth.css">
@@ -11,32 +12,32 @@
 <body class="auth-page">
 
 <form class="auth-card" id="signup-form" novalidate>
-    <h1>Create account</h1>
+    <h1 data-i18n="auth.createAccount">Create account</h1>
 
     <div class="field">
-        <label for="signup-username">Username <span class="req">*</span></label>
+        <label for="signup-username"><span data-i18n="field.username">Username</span> <span class="req">*</span></label>
         <input type="text" id="signup-username" autocomplete="username" required>
     </div>
 
     <div class="field">
-        <label for="signup-email">Email <span class="req">*</span></label>
+        <label for="signup-email"><span data-i18n="field.email">Email</span> <span class="req">*</span></label>
         <input type="email" id="signup-email" autocomplete="email" required>
     </div>
 
     <div class="field">
-        <label for="signup-password">Password <span class="req">*</span></label>
+        <label for="signup-password"><span data-i18n="field.password">Password</span> <span class="req">*</span></label>
         <input type="password" id="signup-password" autocomplete="new-password" minlength="8" required>
     </div>
 
     <div class="field">
-        <label for="signup-confirm">Confirm password <span class="req">*</span></label>
+        <label for="signup-confirm"><span data-i18n="auth.confirmPassword">Confirm password</span> <span class="req">*</span></label>
         <input type="password" id="signup-confirm" autocomplete="new-password" required>
     </div>
 
     <p class="auth-error" id="auth-error"></p>
-    <button type="submit" class="btn btn-primary">Create account</button>
+    <button type="submit" class="btn btn-primary" data-i18n="auth.createAccount">Create account</button>
 
-    <p class="auth-switch">Already have an account? <a href="./login.html">Log in</a></p>
+    <p class="auth-switch"><span data-i18n="auth.haveAccount">Already have an account?</span> <a href="./login.html" data-i18n="auth.login">Log in</a></p>
 </form>
 
 <script src="./javascript/auth.js"></script>

@@ -15,10 +15,10 @@ async function postAuth(path, payload) {
     })
 
     if (!response.ok) {
-        let detail = `Request failed (${response.status})`
+        let detail = t('auth.requestFailed', {status: response.status})
         try {
             const problem = await response.json()
-            detail = problem.detail || detail
+            detail = translateServerMessage(problem.detail) || detail
         } catch (ignored) {
         }
         throw new Error(detail)
@@ -34,7 +34,7 @@ if (loginForm) {
         const username = document.getElementById('login-username').value.trim()
         const password = document.getElementById('login-password').value
         if (!username || !password) {
-            showError('Username and password are required')
+            showError(t('auth.loginRequired'))
             return
         }
         try {
@@ -57,15 +57,15 @@ if (signupForm) {
         const password = document.getElementById('signup-password').value
         const confirm = document.getElementById('signup-confirm').value
         if (!username || !email || !password) {
-            showError('All fields are required')
+            showError(t('auth.allRequired'))
             return
         }
         if (password.length < 8) {
-            showError('Password must be at least 8 characters')
+            showError(t('err.passwordLength'))
             return
         }
         if (password !== confirm) {
-            showError('Passwords do not match')
+            showError(t('auth.passwordMismatch'))
             return
         }
         try {

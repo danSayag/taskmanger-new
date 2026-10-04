@@ -1,8 +1,9 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <script src="./javascript/i18n.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Tasks &middot; Log in</title>
+    <title data-i18n="title.login">Tasks &middot; Log in</title>
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/screens.css">
     <link rel="stylesheet" href="./css/auth.css">
@@ -11,22 +12,22 @@
 <body class="auth-page">
 
 <form class="auth-card" id="login-form" novalidate>
-    <h1>Log in</h1>
+    <h1 data-i18n="auth.login">Log in</h1>
 
     <div class="field">
-        <label for="login-username">Username or email</label>
+        <label for="login-username" data-i18n="auth.usernameOrEmail">Username or email</label>
         <input type="text" id="login-username" autocomplete="username" required>
     </div>
 
     <div class="field">
-        <label for="login-password">Password</label>
+        <label for="login-password" data-i18n="field.password">Password</label>
         <input type="password" id="login-password" autocomplete="current-password" required>
     </div>
 
     <p class="auth-error" id="auth-error"></p>
-    <button type="submit" class="btn btn-primary">Log in</button>
+    <button type="submit" class="btn btn-primary" data-i18n="auth.login">Log in</button>
 
-    <p class="auth-switch">No account? <a href="./signup.html">Create one</a></p>
+    <p class="auth-switch"><span data-i18n="auth.noAccount">No account?</span> <a href="./signup.html" data-i18n="auth.createOne">Create one</a></p>
 </form>
 
 <script src="./javascript/auth.js"></script>

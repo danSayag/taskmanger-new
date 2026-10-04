@@ -2,7 +2,7 @@
 
 let page = 1
 
-const STATUS_LABELS = {todo: 'TODO', inprogress: 'IN PROGRESS', done: 'DONE'}
+const STATUS_LABELS = {todo: t('status.TODO'), inprogress: t('status.IN_PROGRESS'), done: t('status.DONE')}
 const PRIORITY_ORDER = {HIGH: 0, MEDIUM: 1, LOW: 2}
 
 // The Priority filter and search are applied by the backend; status and sorting stay client-side.
@@ -12,7 +12,7 @@ async function loadTasks() {
     allTasks = (await api(priority === 'all' ? '' : PRIORITY_PATH(priority))) || []
   } catch (err) {
     console.error('Error loading tasks', err)
-    alert('Could not load tasks')
+    alert(t('err.loadTasks'))
     return
   }
   await runSearch()
@@ -43,7 +43,7 @@ function rowHtml(task) {
   return `
     <tr class="${done ? 'is-done' : ''}">
       <td class="col-check"><input type="checkbox" class="row-check" data-id="${task.taskId}" ${done ? 'checked' : ''}
-                                   title="Mark as ${done ? 'to do' : 'done'}"></td>
+                                   title="${t(done ? 'list.markTodo' : 'list.markDone')}"></td>
       <td>
         <p class="row-title">${escapeHtml(task.title)} ${ownerTag(task)}</p>
         ${desc}
@@ -52,8 +52,8 @@ function rowHtml(task) {
       <td>${priorityBadge(task)}</td>
       <td class="cell-due${isOverdue(task) ? ' overdue' : ''}">${formatDate(task.dueDate)}</td>
       <td class="col-actions">
-        <a href="#edit-task" class="row-action" data-id="${task.taskId}" title="Edit">&#9998;</a>
-        <a href="#delete-task" class="row-action" data-id="${task.taskId}" title="Delete">&#128465;</a>
+        <a href="#edit-task" class="row-action" data-id="${task.taskId}" title="${t('list.edit')}">&#9998;</a>
+        <a href="#delete-task" class="row-action" data-id="${task.taskId}" title="${t('list.delete')}">&#128465;</a>
       </td>
     </tr>`
 }
@@ -69,21 +69,21 @@ function renderTasks() {
   const body = document.querySelector('#task-list tbody')
   body.innerHTML = shown.length
     ? shown.map(rowHtml).join('')
-    : `<tr><td colspan="6" class="cell-empty">No tasks found</td></tr>`
+    : `<tr><td colspan="6" class="cell-empty">${t('list.noTasks')}</td></tr>`
 
   document.getElementById('result-count').textContent = tasks.length
-    ? `Showing ${start + 1}–${start + shown.length} of ${tasks.length}`
-    : 'Showing 0 of 0'
+    ? t('list.showing', {from: start + 1, to: start + shown.length, total: tasks.length})
+    : t('list.showingNone')
 
   renderPager(pages)
 }
 
 function renderPager(pages) {
-  let html = `<a href="#" data-page="${page - 1}">&#8249; Prev</a>`
+  let html = `<a href="#" data-page="${page - 1}">${t('pager.prev')}</a>`
   for (let p = 1; p <= pages; p++) {
     html += `<a href="#" data-page="${p}" class="${p === page ? 'is-current' : ''}">${p}</a>`
   }
-  html += `<a href="#" data-page="${page + 1}">Next &#8250;</a>`
+  html += `<a href="#" data-page="${page + 1}">${t('pager.next')}</a>`
   document.getElementById('pager').innerHTML = html
 }
 
