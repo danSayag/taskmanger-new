@@ -2,8 +2,9 @@
 <head>
     <script src="./javascript/guard.js"></script>
     <meta charset="utf-8">
+    <script src="./javascript/i18n.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Tasks &middot; List</title>
+    <title data-i18n="title.list">Tasks &middot; List</title>
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/screens.css">
 </head>
@@ -13,57 +14,57 @@
 <div class="container">
     <div class="board">
         <div class="topbar">
-            <label id="task-label">Tasks</label>
-            <a href="./index.html" class="view-tab">Board</a>
-            <a href="./list.html" class="view-tab is-active">List</a>
-            <a href="./messages.html" class="view-tab">Messages</a>
-            <input type="search" id="search" placeholder="Search tasks...">
-            <a href="#new-task" id="new-task-btn" class="btn btn-primary">+ New task</a>
-            <button type="button" class="btn" id="logout-btn" onclick="logout()">Log out</button>
+            <label id="task-label" data-i18n="nav.brand">Tasks</label>
+            <a href="./index.html" class="view-tab" data-i18n="nav.board">Board</a>
+            <a href="./list.html" class="view-tab is-active" data-i18n="nav.list">List</a>
+            <a href="./messages.html" class="view-tab" data-i18n="nav.messages">Messages</a>
+            <input type="search" id="search" placeholder="Search tasks..." data-i18n-placeholder="search.tasks">
+            <a href="#new-task" id="new-task-btn" class="btn btn-primary" data-i18n="btn.newTask">+ New task</a>
+            <button type="button" class="btn" id="logout-btn" onclick="logout()" data-i18n="nav.logout">Log out</button>
         </div>
 
         <div class="list-view">
 
             <div class="list-toolbar">
                 <div class="filter-pill">
-                    <span>Status</span>
+                    <span data-i18n="filter.status">Status</span>
                     <select id="list-status">
-                        <option value="all">All</option>
-                        <option value="todo">To do</option>
-                        <option value="inprogress">In progress</option>
-                        <option value="done">Done</option>
+                        <option value="all" data-i18n="filter.all">All</option>
+                        <option value="todo" data-i18n="status.todo">To do</option>
+                        <option value="inprogress" data-i18n="status.inprogress">In progress</option>
+                        <option value="done" data-i18n="status.done">Done</option>
                     </select>
                 </div>
                 <div class="filter-pill">
-                    <span>Priority</span>
+                    <span data-i18n="filter.priority">Priority</span>
                     <select id="list-priority">
-                        <option value="all">All</option>
-                        <option value="HIGH">High</option>
-                        <option value="MEDIUM">Medium</option>
-                        <option value="LOW">Low</option>
+                        <option value="all" data-i18n="filter.all">All</option>
+                        <option value="HIGH" data-i18n="priority.high">High</option>
+                        <option value="MEDIUM" data-i18n="priority.medium">Medium</option>
+                        <option value="LOW" data-i18n="priority.low">Low</option>
                     </select>
                 </div>
                 <div class="filter-pill">
-                    <span>Sort</span>
+                    <span data-i18n="filter.sort">Sort</span>
                     <select id="list-sort">
-                        <option value="due-asc">Due date &#8593;</option>
-                        <option value="due-desc">Due date &#8595;</option>
-                        <option value="priority">Priority</option>
-                        <option value="title">Title</option>
+                        <option value="due-asc" data-i18n="sort.dueAsc">Due date &#8593;</option>
+                        <option value="due-desc" data-i18n="sort.dueDesc">Due date &#8595;</option>
+                        <option value="priority" data-i18n="sort.priority">Priority</option>
+                        <option value="title" data-i18n="sort.title">Title</option>
                     </select>
                 </div>
-                <a href="#" id="clear-filters" class="btn btn-link">Clear filters</a>
-                <span id="result-count">Showing 0 of 0</span>
+                <a href="#" id="clear-filters" class="btn btn-link" data-i18n="btn.clearFilters">Clear filters</a>
+                <span id="result-count"></span>
             </div>
 
             <table id="task-list">
                 <thead>
                     <tr>
                         <th class="col-check"></th>
-                        <th>Title</th>
-                        <th>Status</th>
-                        <th>Priority</th>
-                        <th>Due</th>
+                        <th data-i18n="col.title">Title</th>
+                        <th data-i18n="col.status">Status</th>
+                        <th data-i18n="col.priority">Priority</th>
+                        <th data-i18n="col.due">Due</th>
                         <th class="col-actions"></th>
                     </tr>
                 </thead>
@@ -73,7 +74,7 @@
 
             <div class="list-footer">
                 <span class="rows-per-page">
-                    Rows per page:
+                    <span data-i18n="list.rowsPerPage">Rows per page:</span>
                     <select id="rows-per-page">
                         <option>10</option>
                         <option>25</option>
@@ -91,46 +92,46 @@
     <a class="modal-backdrop" href="#"></a>
     <div class="dialog">
         <div class="dialog-head">
-            <h2>New task</h2>
+            <h2 data-i18n="modal.newTask">New task</h2>
             <a class="dialog-close" href="#">&#10005;</a>
         </div>
 
         <div class="field">
-            <label for="new-title">Title <span class="req">*</span></label>
+            <label for="new-title"><span data-i18n="field.title">Title</span> <span class="req">*</span></label>
             <input type="text" id="new-title">
         </div>
 
         <div class="field">
-            <label for="new-desc">Description</label>
-            <textarea id="new-desc" placeholder="Optional details&hellip;"></textarea>
+            <label for="new-desc" data-i18n="field.description">Description</label>
+            <textarea id="new-desc" placeholder="Optional details&hellip;" data-i18n-placeholder="field.descPlaceholder"></textarea>
         </div>
 
         <div class="field-row">
             <div class="field">
-                <label for="new-status">Status</label>
+                <label for="new-status" data-i18n="field.status">Status</label>
                 <select id="new-status">
-                    <option value="TODO">TODO</option>
-                    <option value="IN_PROGRESS">IN PROGRESS</option>
-                    <option value="DONE">DONE</option>
+                    <option value="TODO" data-i18n="status.TODO">TODO</option>
+                    <option value="IN_PROGRESS" data-i18n="status.IN_PROGRESS">IN PROGRESS</option>
+                    <option value="DONE" data-i18n="status.DONE">DONE</option>
                 </select>
             </div>
             <div class="field">
-                <label for="new-priority">Priority</label>
+                <label for="new-priority" data-i18n="field.priority">Priority</label>
                 <select id="new-priority">
-                    <option>LOW</option>
-                    <option selected>MEDIUM</option>
-                    <option>HIGH</option>
+                    <option value="LOW" data-i18n="priority.LOW">LOW</option>
+                    <option value="MEDIUM" selected data-i18n="priority.MEDIUM">MEDIUM</option>
+                    <option value="HIGH" data-i18n="priority.HIGH">HIGH</option>
                 </select>
             </div>
             <div class="field">
-                <label for="new-due">Due date</label>
+                <label for="new-due" data-i18n="field.dueDate">Due date</label>
                 <input type="date" id="new-due">
             </div>
         </div>
 
         <div class="dialog-foot">
-            <a href="#" class="btn spacer">Cancel</a>
-            <button type="button" class="btn btn-primary" onclick="submitNewTask()">Create task</button>
+            <a href="#" class="btn spacer" data-i18n="btn.cancel">Cancel</a>
+            <button type="button" class="btn btn-primary" onclick="submitNewTask()" data-i18n="btn.createTask">Create task</button>
         </div>
     </div>
 </div>
@@ -140,46 +141,46 @@
     <a class="modal-backdrop" href="#"></a>
     <div class="dialog">
         <div class="dialog-head">
-            <h2>Edit task</h2>
+            <h2 data-i18n="modal.editTask">Edit task</h2>
             <a class="dialog-close" href="#">&#10005;</a>
         </div>
 
         <div class="field">
-            <label for="edit-title">Title <span class="req">*</span></label>
+            <label for="edit-title"><span data-i18n="field.title">Title</span> <span class="req">*</span></label>
             <input type="text" id="edit-title">
         </div>
 
         <div class="field">
-            <label for="edit-desc">Description</label>
+            <label for="edit-desc" data-i18n="field.description">Description</label>
             <textarea id="edit-desc"></textarea>
         </div>
 
         <div class="field">
-            <label>Status</label>
+            <label data-i18n="field.status">Status</label>
             <div class="segmented">
                 <input type="radio" name="edit-status" id="st-todo">
-                <label for="st-todo">To do</label>
+                <label for="st-todo" data-i18n="status.todo">To do</label>
                 <input type="radio" name="edit-status" id="st-prog" checked>
-                <label for="st-prog">In progress</label>
+                <label for="st-prog" data-i18n="status.inprogress">In progress</label>
                 <input type="radio" name="edit-status" id="st-done">
-                <label for="st-done">Done</label>
+                <label for="st-done" data-i18n="status.done">Done</label>
             </div>
         </div>
 
         <div class="field-row">
             <div class="field">
-                <label>Priority</label>
+                <label data-i18n="field.priority">Priority</label>
                 <div class="segmented">
                     <input type="radio" name="edit-priority" id="pr-low">
-                    <label for="pr-low">Low</label>
+                    <label for="pr-low" data-i18n="priority.low">Low</label>
                     <input type="radio" name="edit-priority" id="pr-med" checked>
-                    <label for="pr-med">Med</label>
+                    <label for="pr-med" data-i18n="priority.med">Med</label>
                     <input type="radio" name="edit-priority" id="pr-high">
-                    <label for="pr-high">High</label>
+                    <label for="pr-high" data-i18n="priority.high">High</label>
                 </div>
             </div>
             <div class="field">
-                <label for="edit-due">Due date</label>
+                <label for="edit-due" data-i18n="field.dueDate">Due date</label>
                 <input type="date" id="edit-due">
             </div>
         </div>
@@ -187,9 +188,9 @@
         <p class="form-meta"></p>
 
         <div class="dialog-foot">
-            <a href="#delete-task" class="btn btn-link-danger">Delete</a>
-            <a href="#" class="btn spacer">Cancel</a>
-            <button type="button" class="btn btn-primary" onclick="submitEditTask()">Save</button>
+            <a href="#delete-task" class="btn btn-link-danger" data-i18n="btn.delete">Delete</a>
+            <a href="#" class="btn spacer" data-i18n="btn.cancel">Cancel</a>
+            <button type="button" class="btn btn-primary" onclick="submitEditTask()" data-i18n="btn.save">Save</button>
         </div>
     </div>
 </div>
@@ -199,19 +200,19 @@
     <a class="modal-backdrop" href="#"></a>
     <div class="dialog dialog-confirm">
         <div class="dialog-head">
-            <h2>Delete task?</h2>
+            <h2 data-i18n="modal.deleteTask">Delete task?</h2>
         </div>
-        <p id="delete-message">This task will be permanently deleted. This can&rsquo;t be undone.</p>
+        <p id="delete-message" data-i18n="modal.deleteMessage">This task will be permanently deleted. This can&rsquo;t be undone.</p>
         <div class="dialog-foot">
-            <a href="#" class="btn spacer">Cancel</a>
-            <a href="#deleted" class="btn btn-danger" onclick="confirmDelete()">Delete</a>
+            <a href="#" class="btn spacer" data-i18n="btn.cancel">Cancel</a>
+            <a href="#deleted" class="btn btn-danger" onclick="confirmDelete()" data-i18n="btn.delete">Delete</a>
         </div>
     </div>
 </div>
 
 
 <!-- ============ Success toast (shown after Delete) ============ -->
-<div class="toast toast-target" id="deleted">Task deleted</div>
+<div class="toast toast-target" id="deleted" data-i18n="toast.taskDeleted">Task deleted</div>
 <script src="./javascript/common.js"></script>
 <script src="./javascript/list.js"></script>
 

@@ -76,11 +76,11 @@ function initials(name) {
 
 function nameOf(userId) {
   return users.find(u => u.id === userId)?.username ||
-    conversations.find(c => c.userId === userId)?.username || 'Unknown user'
+    conversations.find(c => c.userId === userId)?.username || t('msg.unknownUser')
 }
 
 function formatTime(value) {
-  return new Date(value).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit'})
+  return new Date(value).toLocaleTimeString(LOCALE, {hour: 'numeric', minute: '2-digit'})
 }
 
 // "10:42 AM" today, "Mon" this week, "Sep 3" otherwise
@@ -90,7 +90,7 @@ function formatShort(value) {
   if (date >= today) return formatTime(value)
   const weekAgo = new Date(today)
   weekAgo.setDate(weekAgo.getDate() - 6)
-  if (date >= weekAgo) return date.toLocaleDateString('en-US', {weekday: 'short'})
+  if (date >= weekAgo) return date.toLocaleDateString(LOCALE, {weekday: 'short'})
   return formatDate(value)
 }
 
@@ -99,14 +99,14 @@ function formatDay(value) {
   const today = startOfToday()
   const yesterday = new Date(today)
   yesterday.setDate(yesterday.getDate() - 1)
-  if (date >= today) return 'Today'
-  if (date >= yesterday) return 'Yesterday'
-  return date.toLocaleDateString('en-US', {weekday: 'long', month: 'short', day: 'numeric'})
+  if (date >= today) return t('msg.today')
+  if (date >= yesterday) return t('msg.yesterday')
+  return date.toLocaleDateString(LOCALE, {weekday: 'long', month: 'short', day: 'numeric'})
 }
 
 function renderUserPicker() {
   const picker = document.getElementById('new-conversation')
-  picker.innerHTML = '<option value="">+ New message</option>' +
+  picker.innerHTML = `<option value="">${t('msg.newMessage')}</option>` +
     users.map(u => `<option value="${u.id}">${escapeHtml(u.username)}</option>`).join('')
 }
 
@@ -118,7 +118,7 @@ function renderConversations() {
 
   const list = document.getElementById('conversation-list')
   if (!shown.length) {
-    list.innerHTML = `<li class="conversation-empty">${query ? 'No matches' : 'No conversations yet'}</li>`
+    list.innerHTML = `<li class="conversation-empty">${t(query ? 'msg.noMatches' : 'msg.noConversations')}</li>`
     return
   }
   list.innerHTML = shown.map(c => `
@@ -154,10 +154,10 @@ function renderThread(scrollToEnd) {
     html += `
       <div class="message ${mine ? 'is-mine' : ''} ${m.pending ? 'is-pending' : ''}">
         <div class="bubble">${escapeHtml(m.content)}</div>
-        <span class="message-time">${m.pending ? 'Sending…' : formatTime(m.sentAt)}</span>
+        <span class="message-time">${m.pending ? t('msg.sending') : formatTime(m.sentAt)}</span>
       </div>`
   }
-  box.innerHTML = html || '<p class="thread-start">No messages yet. Say hello!</p>'
+  box.innerHTML = html || `<p class="thread-start">${t('msg.sayHello')}</p>`
 
   // keep the reader's place unless they were already at the bottom
   if (scrollToEnd || nearBottom) box.scrollTop = box.scrollHeight
@@ -233,7 +233,7 @@ async function sendMessage(event) {
     console.error('Error sending message', err)
     messages.splice(messages.indexOf(pending), 1)
     input.value = content
-    alert('Could not send the message')
+    alert(t('err.sendMessage'))
   }
   renderThread(true)
   loadConversations()

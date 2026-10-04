@@ -1,4 +1,4 @@
-// Shared by the Board (script.js) and List (list.js) pages.
+// Shared by the Board (script.js) and List (list.js) pages. Text comes from i18n.js (t / tn).
 // Each page defines its own loadTasks(), which the functions below call after a change.
 
 // same origin as the page, so it works locally and when deployed
@@ -74,13 +74,13 @@ async function loadCurrentUser() {
   if (!currentUser) return
 
   const logoutBtn = document.getElementById('logout-btn')
-  if (logoutBtn) logoutBtn.title = `Logged in as ${currentUser.username}`
+  if (logoutBtn) logoutBtn.title = t('nav.loggedInAs', {name: currentUser.username})
   if (isAdmin() && !document.getElementById('admin-tab')) {
     const tab = document.createElement('a')
     tab.id = 'admin-tab'
     tab.href = './admin.html'
     tab.className = 'view-tab' + (location.pathname.endsWith('admin.html') ? ' is-active' : '')
-    tab.textContent = 'Users'
+    tab.textContent = t('nav.users')
     const tabs = document.querySelectorAll('.topbar .view-tab')
     tabs[tabs.length - 1]?.after(tab)
   }
@@ -102,7 +102,7 @@ async function addOwnerPicker() {
   const field = document.createElement('div')
   field.className = 'field'
   field.innerHTML = `
-    <label for="new-owner">Assign to</label>
+    <label for="new-owner">${t('field.assignTo')}</label>
     <select id="new-owner">
       ${users.map(u => `<option value="${u.id}" ${u.id === currentUser.id ? 'selected' : ''}>${escapeHtml(u.username)}</option>`).join('')}
     </select>`
@@ -116,7 +116,7 @@ const currentUserReady = loadCurrentUser().then(() => {
 // Owner label shown next to a task, only to admins (who see everyone's tasks)
 function ownerTag(task) {
   return isAdmin() && task.ownerName
-    ? `<span class="owner-tag" title="Owner">@${escapeHtml(task.ownerName)}</span>`
+    ? `<span class="owner-tag" title="${t('task.owner')}">@${escapeHtml(task.ownerName)}</span>`
     : ''
 }
 
@@ -155,7 +155,7 @@ function parseDate(value) {
 }
 
 function formatDate(value) {
-  return parseDate(value).toLocaleDateString('en-US', {month: 'short', day: 'numeric'})
+  return parseDate(value).toLocaleDateString(LOCALE, {month: 'short', day: 'numeric'})
 }
 
 // 'todo' | 'inprogress' | 'done'; tasks without a status count as 'todo'
@@ -220,7 +220,7 @@ async function submitNewTask() {
   const title = document.getElementById('new-title').value.trim()
   const dueDate = document.getElementById('new-due').value
   if (!title || !dueDate) {
-    alert('Title and due date are required')
+    alert(t('err.titleDueRequired'))
     return
   }
 
@@ -240,7 +240,7 @@ async function submitNewTask() {
     })
   } catch (err) {
     console.error('Error creating task', err)
-    alert(`Could not create task: ${err.detail || err.message}`)
+    alert(t('err.createTask', {detail: translateServerMessage(err.detail || err.message)}))
     return
   }
 
@@ -264,15 +264,14 @@ function openEdit(taskId) {
   document.getElementById(ids[task.priority] || 'pr-med').checked = true
   const statusIds = {todo: 'st-todo', inprogress: 'st-prog', done: 'st-done'}
   document.getElementById(statusIds[statusKey(task)]).checked = true
-  document.getElementById('delete-message').textContent =
-    `“${task.title}” will be permanently deleted. This can’t be undone.`
+  document.getElementById('delete-message').textContent = t('modal.deleteNamed', {title: task.title})
 }
 
 async function submitEditTask() {
   const title = document.getElementById('edit-title').value.trim()
   const dueDate = document.getElementById('edit-due').value
   if (!title || !dueDate) {
-    alert('Title and due date are required')
+    alert(t('err.titleDueRequired'))
     return
   }
   const priorities = {'pr-low': 'LOW', 'pr-med': 'MEDIUM', 'pr-high': 'HIGH'}
@@ -293,7 +292,7 @@ async function submitEditTask() {
     })
   } catch (err) {
     console.error('Error updating task', err)
-    alert(`Could not update task: ${err.detail || err.message}`)
+    alert(t('err.updateTask', {detail: translateServerMessage(err.detail || err.message)}))
     return
   }
 
@@ -310,7 +309,7 @@ async function setStatus(taskId, status) {
     await api(`/${taskId}`, {method: 'PUT', body: JSON.stringify({title, description, priority, status, dueDate})})
   } catch (err) {
     console.error('Error changing status', err)
-    alert('Could not change the task status')
+    alert(t('err.changeStatus'))
     return false
   }
   task.status = status
@@ -324,7 +323,7 @@ async function confirmDelete() {
     await api(`/${editingId}`, {method: 'DELETE'})
   } catch (err) {
     console.error('Error deleting task', err)
-    alert('Could not delete task')
+    alert(t('err.deleteTask'))
     return
   }
   loadTasks()
@@ -343,7 +342,7 @@ async function cyclePriority(taskId) {
     await api(CHANGE_PRIORITY_PATH(taskId), {method: 'PATCH', body: JSON.stringify({priority: next})})
   } catch (err) {
     console.error('Error changing priority', err)
-    alert('Could not change the priority')
+    alert(t('err.changePriority'))
     return
   }
   loadTasks()
@@ -352,5 +351,5 @@ async function cyclePriority(taskId) {
 function priorityBadge(task) {
   const priority = task.priority || 'MEDIUM'
   return `<button type="button" class="badge badge-${priority.toLowerCase()} badge-button"
-                  data-id="${task.taskId}" title="Click to change priority">${priority}</button>`
+                  data-id="${task.taskId}" title="${t('priority.change')}">${t(`priority.${priority}`)}</button>`
 }

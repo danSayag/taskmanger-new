@@ -23,7 +23,7 @@ async function loadTasks() {
     }
   } catch (err) {
     console.error('Error loading tasks', err)
-    alert('Could not load tasks')
+    alert(t('err.loadTasks'))
     return
   }
   await runSearch()
@@ -64,8 +64,7 @@ function renderTasks() {
     document.getElementById(`${column}-content`).innerHTML = inColumn.map(cardHtml).join('')
     document.getElementById(`${column}-count`).textContent = inColumn.length
   }
-  document.getElementById('task-count').textContent =
-    `${tasks.length} ${tasks.length === 1 ? 'task' : 'tasks'}`
+  document.getElementById('task-count').textContent = tn('count.task', tasks.length)
 }
 
 // ---------- drag to change status ----------

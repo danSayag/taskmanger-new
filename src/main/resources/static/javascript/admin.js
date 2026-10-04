@@ -9,7 +9,7 @@ async function loadUsers() {
     allUsers = (await request(USERS_URL)) || []
   } catch (err) {
     console.error('Error loading users', err)
-    alert('Could not load users')
+    alert(t('err.loadUsers'))
     return
   }
   renderUsers()
@@ -18,21 +18,21 @@ async function loadUsers() {
 function rowHtml(user) {
   const isMe = user.id === currentUser.id
   const options = ['USER', 'ADMIN']
-    .map(role => `<option value="${role}" ${role === user.role ? 'selected' : ''}>${role}</option>`)
+    .map(role => `<option value="${role}" ${role === user.role ? 'selected' : ''}>${t(`role.${role}`)}</option>`)
     .join('')
   return `
     <tr>
-      <td><p class="row-title">${escapeHtml(user.username)}${isMe ? ' <span class="owner-tag">you</span>' : ''}</p></td>
+      <td><p class="row-title">${escapeHtml(user.username)}${isMe ? ` <span class="owner-tag">${t('admin.you')}</span>` : ''}</p></td>
       <td>${escapeHtml(user.email)}</td>
       <td>${user.taskCount}</td>
       <td>
-        <select class="role-select" data-id="${user.id}" ${isMe ? 'disabled title="You can\u2019t change your own role"' : ''}>
+        <select class="role-select" data-id="${user.id}" ${isMe ? `disabled title="${t('admin.cantChangeOwnRole')}"` : ''}>
           ${options}
         </select>
       </td>
       <td class="col-actions">
-        ${isMe ? '' : `<a href="./messages.html#user=${user.id}" class="row-action" title="Send a message">&#9993;</a>`}
-        ${isMe ? '' : `<a href="#" class="row-action delete-user" data-id="${user.id}" title="Delete user">&#128465;</a>`}
+        ${isMe ? '' : `<a href="./messages.html#user=${user.id}" class="row-action" title="${t('admin.sendMessage')}">&#9993;</a>`}
+        ${isMe ? '' : `<a href="#" class="row-action delete-user" data-id="${user.id}" title="${t('admin.deleteUser')}">&#128465;</a>`}
       </td>
     </tr>`
 }
@@ -46,15 +46,14 @@ function renderUsers() {
 
   document.querySelector('#user-list tbody').innerHTML = users.length
     ? users.map(rowHtml).join('')
-    : `<tr><td colspan="5" class="cell-empty">No users found</td></tr>`
-  document.getElementById('result-count').textContent =
-    `${users.length} ${users.length === 1 ? 'user' : 'users'}`
+    : `<tr><td colspan="5" class="cell-empty">${t('admin.noUsers')}</td></tr>`
+  document.getElementById('result-count').textContent = tn('count.user', users.length)
 }
 
 async function changeRole(select) {
   const user = allUsers.find(u => u.id === Number(select.dataset.id))
   const role = select.value
-  if (!confirm(`Change ${user.username}'s role to ${role}?`)) {
+  if (!confirm(t('admin.confirmRole', {name: user.username, role: t(`role.${role}`)}))) {
     select.value = user.role
     return
   }
@@ -67,7 +66,7 @@ async function changeRole(select) {
     Object.assign(user, updated)
   } catch (err) {
     console.error('Error changing role', err)
-    alert('Could not change the role')
+    alert(t('err.changeRole'))
     select.value = user.role
     return
   }
@@ -79,11 +78,11 @@ async function submitNewUser() {
   const email = document.getElementById('new-email').value.trim()
   const password = document.getElementById('new-password').value
   if (!username || !email || !password) {
-    alert('Username, email and password are required')
+    alert(t('err.userFieldsRequired'))
     return
   }
   if (password.length < 8) {
-    alert('Password must be at least 8 characters')
+    alert(t('err.passwordLength'))
     return
   }
 
@@ -94,7 +93,7 @@ async function submitNewUser() {
     })
   } catch (err) {
     console.error('Error creating user', err)
-    alert('Could not create user (is the username or email already used?)')
+    alert(t('err.createUser'))
     return
   }
 
@@ -108,14 +107,14 @@ async function submitNewUser() {
 
 async function deleteUser(userId) {
   const user = allUsers.find(u => u.id === userId)
-  const tasks = user.taskCount === 1 ? '1 task' : `${user.taskCount} tasks`
-  if (!confirm(`Delete ${user.username} and their ${tasks}? This can’t be undone.`)) return
+  const tasks = tn('count.task', user.taskCount)
+  if (!confirm(t('admin.confirmDelete', {name: user.username, tasks}))) return
 
   try {
     await request(`${USERS_URL}/${userId}`, {method: 'DELETE'})
   } catch (err) {
     console.error('Error deleting user', err)
-    alert('Could not delete user')
+    alert(t('err.deleteUser'))
     return
   }
   loadUsers()

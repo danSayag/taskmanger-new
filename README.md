@@ -29,6 +29,11 @@ A multi-user task manager built with Spring Boot. It has JWT authentication, use
 - Direct messages between users: a conversation list with unread counts, a chat thread, and new messages checked every 5 seconds.
 - Until the backend endpoints below exist, the page shows "Messaging isn't available yet".
 
+### Languages
+- The site is available in **English** (default), **French** and **Hebrew**. Pick one from the language menu in the top bar or on the login page.
+- The choice is saved in a `lang` cookie, so it is remembered across pages and logins. Hebrew switches the layout to right-to-left.
+- All text lives in `javascript/i18n.js`. A small notice tells visitors the site uses cookies; dismissing it sets a `cookie_notice` cookie.
+
 ## Tech stack
 
 - Java 17, Spring Boot 4.1

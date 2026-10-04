@@ -2,8 +2,9 @@
 <head>
     <script src="./javascript/guard.js"></script>
     <meta charset="utf-8">
+    <script src="./javascript/i18n.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Tasks &middot; Users</title>
+    <title data-i18n="title.users">Tasks &middot; Users</title>
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/screens.css">
 </head>
@@ -13,36 +14,36 @@
 <div class="container">
     <div class="board">
         <div class="topbar">
-            <label id="task-label">Tasks</label>
-            <a href="./index.html" class="view-tab">Board</a>
-            <a href="./list.html" class="view-tab">List</a>
-            <a href="./messages.html" class="view-tab">Messages</a>
-            <input type="search" id="search" placeholder="Search users...">
-            <a href="#new-user" id="new-task-btn" class="btn btn-primary">+ New user</a>
-            <button type="button" class="btn" id="logout-btn" onclick="logout()">Log out</button>
+            <label id="task-label" data-i18n="nav.brand">Tasks</label>
+            <a href="./index.html" class="view-tab" data-i18n="nav.board">Board</a>
+            <a href="./list.html" class="view-tab" data-i18n="nav.list">List</a>
+            <a href="./messages.html" class="view-tab" data-i18n="nav.messages">Messages</a>
+            <input type="search" id="search" placeholder="Search users..." data-i18n-placeholder="search.users">
+            <a href="#new-user" id="new-task-btn" class="btn btn-primary" data-i18n="btn.newUser">+ New user</a>
+            <button type="button" class="btn" id="logout-btn" onclick="logout()" data-i18n="nav.logout">Log out</button>
         </div>
 
         <div class="list-view">
 
             <div class="list-toolbar">
                 <div class="filter-pill">
-                    <span>Role</span>
+                    <span data-i18n="filter.role">Role</span>
                     <select id="role-filter">
-                        <option value="all">All</option>
-                        <option value="ADMIN">Admin</option>
-                        <option value="USER">User</option>
+                        <option value="all" data-i18n="filter.all">All</option>
+                        <option value="ADMIN" data-i18n="role.admin">Admin</option>
+                        <option value="USER" data-i18n="role.user">User</option>
                     </select>
                 </div>
-                <span id="result-count">0 users</span>
+                <span id="result-count"></span>
             </div>
 
             <table id="user-list">
                 <thead>
                     <tr>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th>Tasks</th>
-                        <th>Role</th>
+                        <th data-i18n="col.username">Username</th>
+                        <th data-i18n="col.email">Email</th>
+                        <th data-i18n="col.tasks">Tasks</th>
+                        <th data-i18n="col.role">Role</th>
                         <th class="col-actions"></th>
                     </tr>
                 </thead>
@@ -58,37 +59,37 @@
     <a class="modal-backdrop" href="#"></a>
     <div class="dialog">
         <div class="dialog-head">
-            <h2>New user</h2>
+            <h2 data-i18n="modal.newUser">New user</h2>
             <a class="dialog-close" href="#">&#10005;</a>
         </div>
 
         <div class="field">
-            <label for="new-username">Username <span class="req">*</span></label>
+            <label for="new-username"><span data-i18n="field.username">Username</span> <span class="req">*</span></label>
             <input type="text" id="new-username" autocomplete="off">
         </div>
 
         <div class="field">
-            <label for="new-email">Email <span class="req">*</span></label>
+            <label for="new-email"><span data-i18n="field.email">Email</span> <span class="req">*</span></label>
             <input type="text" id="new-email" autocomplete="off">
         </div>
 
         <div class="field-row">
             <div class="field">
-                <label for="new-password">Password <span class="req">*</span></label>
-                <input type="text" id="new-password" autocomplete="off" placeholder="At least 8 characters">
+                <label for="new-password"><span data-i18n="field.password">Password</span> <span class="req">*</span></label>
+                <input type="text" id="new-password" autocomplete="off" placeholder="At least 8 characters" data-i18n-placeholder="field.passwordHint">
             </div>
             <div class="field">
-                <label for="new-role">Role</label>
+                <label for="new-role" data-i18n="field.role">Role</label>
                 <select id="new-role">
-                    <option value="USER" selected>USER</option>
-                    <option value="ADMIN">ADMIN</option>
+                    <option value="USER" selected data-i18n="role.USER">USER</option>
+                    <option value="ADMIN" data-i18n="role.ADMIN">ADMIN</option>
                 </select>
             </div>
         </div>
 
         <div class="dialog-foot">
-            <a href="#" class="btn spacer">Cancel</a>
-            <button type="button" class="btn btn-primary" onclick="submitNewUser()">Create user</button>
+            <a href="#" class="btn spacer" data-i18n="btn.cancel">Cancel</a>
+            <button type="button" class="btn btn-primary" onclick="submitNewUser()" data-i18n="btn.createUser">Create user</button>
         </div>
     </div>
 </div>
