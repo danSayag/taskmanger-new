@@ -167,9 +167,50 @@ function isOverdue(task) {
   return statusKey(task) !== 'done' && parseDate(task.dueDate) < startOfToday()
 }
 
+// ---------- search ----------
+
+const SEARCH_PATH = query => `/search/${encodeURIComponent(query)}`  // GET -> searchByDescription
+
+// ids of the tasks the backend matched; null when the search box is empty
+// (or the search request failed, in which case matchesSearch falls back to a plain substring match)
+let searchIds = null
+let searchRun = 0
+
+// Asks the backend which tasks match the search box (it also catches typos)
+async function runSearch() {
+  const query = document.getElementById('search').value.trim()
+  const run = ++searchRun
+  if (!query) {
+    searchIds = null
+    return
+  }
+  let results
+  try {
+    results = (await api(SEARCH_PATH(query))) || []
+  } catch (err) {
+    console.error('Error searching tasks', err)
+    results = null
+  }
+  // ignore answers to older searches that arrive after a newer one
+  if (run === searchRun) searchIds = results && new Set(results.map(t => t.taskId))
+}
+
 function matchesSearch(task) {
+  if (searchIds) return searchIds.has(task.taskId)
   const query = document.getElementById('search').value.trim().toLowerCase()
   return !query || `${task.title} ${task.description || ''}`.toLowerCase().includes(query)
+}
+
+// Runs the search shortly after the user stops typing, then calls onResults
+function wireSearch(onResults) {
+  let timer
+  document.getElementById('search').addEventListener('input', () => {
+    clearTimeout(timer)
+    timer = setTimeout(async () => {
+      await runSearch()
+      onResults()
+    }, 300)
+  })
 }
 
 // ---------- create ----------

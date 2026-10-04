@@ -67,4 +67,9 @@ public class TaskController {
     public List<TaskResponse> getTasksDueBy(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dueDate) {
         return taskService.getTasksDueBy(dueDate);
     }
+
+    @GetMapping("/search/{query}")
+    public List<TaskResponse> searchByDescription(@PathVariable String query) {
+        return taskService.searchByDescription(query);
+    }
 }

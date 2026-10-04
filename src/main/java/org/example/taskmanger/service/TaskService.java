@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 // Users only see and change their own tasks; admins see and change everyone's.
@@ -25,11 +26,18 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
     private final CurrentUserService currentUser;
+    private final LevenshteinDistance levenshteinDistance;
 
-    public TaskService(TaskRepository taskRepository, UserRepository userRepository, CurrentUserService currentUser) {
-        this.taskRepository = taskRepository;
-        this.userRepository = userRepository;
-        this.currentUser = currentUser;
+
+    public TaskService(
+        TaskRepository taskRepository, 
+        UserRepository userRepository, 
+        CurrentUserService currentUser,
+        LevenshteinDistance levenshteinDistance) {
+            this.taskRepository = taskRepository;
+            this.userRepository = userRepository;
+            this.currentUser = currentUser;
+            this.levenshteinDistance = levenshteinDistance;
     }
 
     public List<TaskResponse> getAllTasks() {
@@ -122,4 +130,28 @@ public class TaskService {
     private List<TaskResponse> toResponses(List<Task> tasks) {
         return tasks.stream().map(TaskResponse::from).toList();
     }
+
+    // Matches the query against title and description; if nothing contains it,
+    // falls back to fuzzy matching on the description (typos like "grocries")
+    public List<TaskResponse> searchByDescription(String query) {
+        String lowCaseSearch = query.trim().toLowerCase();
+        List<Task> tasks = currentUser.isAdmin()
+                ? taskRepository.findAll()
+                : taskRepository.findByOwner(currentUser.get());
+
+        List<Task> resTasks = new ArrayList<>();
+        for (Task task : tasks) {
+            String text = task.getTitle() + " " + (task.getDescription() == null ? "" : task.getDescription());
+            if (text.toLowerCase().contains(lowCaseSearch)) {
+                resTasks.add(task);
+            }
+        }
+        if (resTasks.isEmpty()) {
+            List<Task> withDescription = tasks.stream().filter(t -> t.getDescription() != null).toList();
+            resTasks = levenshteinDistance.searchTasks(withDescription, lowCaseSearch);
+        }
+        return toResponses(resTasks);
+    }
+
+    
 }

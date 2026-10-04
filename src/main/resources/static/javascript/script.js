@@ -1,6 +1,6 @@
 // Board page. Shared API/create/edit/delete code lives in common.js.
 
-// The Priority and Due filters are applied by the backend; search stays client-side.
+// The Priority and Due filters and search are applied by the backend.
 async function loadTasks() {
   const priority = document.getElementById('priority-selector').value
   const due = document.getElementById('Due').value
@@ -26,6 +26,7 @@ async function loadTasks() {
     alert('Could not load tasks')
     return
   }
+  await runSearch()
   renderTasks()
 }
 
@@ -130,7 +131,7 @@ board.addEventListener('click', event => {
   const badge = event.target.closest('.badge-button')
   if (badge) cyclePriority(Number(badge.dataset.id))
 })
-document.getElementById('search').addEventListener('input', renderTasks)
+wireSearch(renderTasks)
 for (const id of ['priority-selector', 'Due']) {
   document.getElementById(id).addEventListener('change', loadTasks)
 }

@@ -5,7 +5,7 @@ let page = 1
 const STATUS_LABELS = {todo: 'TODO', inprogress: 'IN PROGRESS', done: 'DONE'}
 const PRIORITY_ORDER = {HIGH: 0, MEDIUM: 1, LOW: 2}
 
-// The Priority filter is applied by the backend; status, search and sorting stay client-side.
+// The Priority filter and search are applied by the backend; status and sorting stay client-side.
 async function loadTasks() {
   const priority = document.getElementById('list-priority').value
   try {
@@ -15,6 +15,7 @@ async function loadTasks() {
     alert('Could not load tasks')
     return
   }
+  await runSearch()
   renderTasks()
 }
 
@@ -115,8 +116,12 @@ document.getElementById('pager').addEventListener('click', event => {
   }
 })
 
-for (const id of ['search', 'list-status', 'list-sort', 'rows-per-page']) {
-  document.getElementById(id).addEventListener(id === 'search' ? 'input' : 'change', () => {
+wireSearch(() => {
+  page = 1
+  renderTasks()
+})
+for (const id of ['list-status', 'list-sort', 'rows-per-page']) {
+  document.getElementById(id).addEventListener('change', () => {
     page = 1
     renderTasks()
   })
