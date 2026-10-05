@@ -50,6 +50,7 @@ public class UserService {
         User user = new User(input.username(), passwordEncoder.encode(input.password()), input.email());
         user.setEnabled(true);
         user.setRole(input.role());
+        
         return toDto(userRepository.save(user));
     }
 

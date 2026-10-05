@@ -24,8 +24,11 @@ public class AuthenticationController {
 
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
-    public void register(@Valid @RequestBody RegisterUserDto registerUserDto) {
-        authenticationService.signup(registerUserDto);
+    // returns a token too, so the new user is logged in straight away
+    public LoginResponse register(@Valid @RequestBody RegisterUserDto registerUserDto) {
+        User user = authenticationService.signup(registerUserDto);
+        String jwtToken = jwtService.generateToken(user);
+        return new LoginResponse(jwtToken, jwtService.getJwtExpirationTime());
     }
 
     @PostMapping("/login")

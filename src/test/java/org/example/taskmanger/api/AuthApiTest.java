@@ -1,5 +1,6 @@
 package org.example.taskmanger.api;
 
+import com.jayway.jsonpath.JsonPath;
 import org.example.taskmanger.model.User;
 import org.junit.jupiter.api.Test;
 
@@ -21,6 +22,22 @@ class AuthApiTest extends ApiTestSupport {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.token").isNotEmpty())
                 .andExpect(jsonPath("$.expiresIn").value(3600000));
+    }
+
+    @Test
+    void signupReturnsUsableToken() throws Exception {
+        String body = mvc.perform(json(post("/auth/signup"), """
+                        {"username": "alice", "email": "alice@example.com", "password": "password123"}
+                        """))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.token").isNotEmpty())
+                .andExpect(jsonPath("$.expiresIn").value(3600000))
+                .andReturn().getResponse().getContentAsString();
+        String token = JsonPath.read(body, "$.token");
+
+        mvc.perform(get("/users/me").with(bearer(token)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value("alice"));
     }
 
     @Test
