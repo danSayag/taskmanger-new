@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.example.taskmanger.dto.ChangeRoleDto;
 import org.example.taskmanger.dto.CreateUserDto;
 import org.example.taskmanger.dto.UserDto;
+import org.example.taskmanger.dto.UserSummaryDto;
 import org.example.taskmanger.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,13 @@ public class UserController {
     @GetMapping("/users/me")
     public UserDto getCurrentUser() {
         return userService.getCurrentUser();
+    }
+
+    // everyone you can message; used by the "+ New message" picker on messages.html
+    @GetMapping("/users")
+    public List<UserSummaryDto> getUsers() {
+        // TODO: return every user as a UserSummaryDto
+        throw new UnsupportedOperationException("TODO");
     }
 
     // /admin/** is restricted to ROLE_ADMIN in SecurityConfiguration

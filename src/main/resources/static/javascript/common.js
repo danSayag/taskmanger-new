@@ -316,6 +316,21 @@ async function setStatus(taskId, status) {
   return true
 }
 
+// Saves a new due date ("yyyy-MM-dd"), e.g. from the Due menu in the list view
+async function setDueDate(taskId, dueDate) {
+  const task = allTasks.find(t => t.taskId === taskId)
+  if (!task || !dueDate || String(task.dueDate).slice(0, 10) === dueDate) return
+  try {
+    const {title, description, priority, status} = task
+    await api(`/${taskId}`, {method: 'PUT', body: JSON.stringify({title, description, priority, status, dueDate})})
+  } catch (err) {
+    console.error('Error changing due date', err)
+    alert(t('err.updateTask', {detail: translateServerMessage(err.detail || err.message)}))
+    return
+  }
+  loadTasks()
+}
+
 // ---------- delete ----------
 
 async function confirmDelete() {
@@ -336,10 +351,16 @@ const NEXT_PRIORITY = {LOW: 'MEDIUM', MEDIUM: 'HIGH', HIGH: 'LOW'}
 async function cyclePriority(taskId) {
   const task = allTasks.find(t => t.taskId === taskId)
   if (!task) return
-  const next = NEXT_PRIORITY[task.priority] || 'MEDIUM'
+  await setPriority(taskId, NEXT_PRIORITY[task.priority] || 'MEDIUM')
+}
+
+// Saves a new priority (the server rejects "changing" to the same one, so that's skipped)
+async function setPriority(taskId, priority) {
+  const task = allTasks.find(t => t.taskId === taskId)
+  if (!task || task.priority === priority) return
 
   try {
-    await api(CHANGE_PRIORITY_PATH(taskId), {method: 'PATCH', body: JSON.stringify({priority: next})})
+    await api(CHANGE_PRIORITY_PATH(taskId), {method: 'PATCH', body: JSON.stringify({priority})})
   } catch (err) {
     console.error('Error changing priority', err)
     alert(t('err.changePriority'))
@@ -348,8 +369,42 @@ async function cyclePriority(taskId) {
   loadTasks()
 }
 
+// Jira's priority icons: red up chevrons, orange equals sign, blue down chevrons
+const PRIORITY_ICONS = {
+  HIGH: '<path d="M3 9l5-4 5 4" stroke="#e2483d"/><path d="M3 13l5-4 5 4" stroke="#e2483d"/>',
+  MEDIUM: '<path d="M3 6h10M3 10h10" stroke="#e2a03f"/>',
+  LOW: '<path d="M3 7l5 4 5-4" stroke="#1d7afc"/>'
+}
+
+function priorityIcon(priority) {
+  return `<svg class="priority-icon" viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round"
+               stroke-linejoin="round" aria-hidden="true">${PRIORITY_ICONS[priority] || PRIORITY_ICONS.MEDIUM}</svg>`
+}
+
 function priorityBadge(task) {
   const priority = task.priority || 'MEDIUM'
+  const label = t(`priority.${priority.toLowerCase()}`)
   return `<button type="button" class="badge badge-${priority.toLowerCase()} badge-button"
-                  data-id="${task.taskId}" title="${t('priority.change')}">${t(`priority.${priority}`)}</button>`
+                  data-id="${task.taskId}" title="${label} · ${t('priority.change')}">
+            ${priorityIcon(priority)}
+            <span class="priority-label">${label}</span>
+          </button>`
+}
+
+// ---------- Jira-style issue key and avatar ----------
+
+// "TASK-12": shown before the title, like a Jira issue key
+function issueKey(task) {
+  return `<span class="issue-type" aria-hidden="true">&#10003;</span><span class="issue-key">TASK-${task.taskId}</span>`
+}
+
+const AVATAR_COLORS = ['#0c66e4', '#1f845a', '#e56910', '#6e5dc6', '#c9372c', '#2898bd', '#943d73']
+
+// round initials avatar; the color is picked from the name so each person keeps theirs
+function avatarHtml(name) {
+  const text = name || '?'
+  let hash = 0
+  for (const ch of text) hash = (hash * 31 + ch.charCodeAt(0)) | 0
+  const color = AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length]
+  return `<span class="j-avatar" style="background:${color}" title="${escapeHtml(text)}">${escapeHtml(text.slice(0, 2).toUpperCase())}</span>`
 }

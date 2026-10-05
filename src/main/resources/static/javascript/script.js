@@ -50,9 +50,14 @@ function cardHtml(task) {
       <h3 class="task-title">${escapeHtml(task.title)}</h3>
       ${desc}
       <div class="task-meta">
-        ${priorityBadge(task)}
-        ${ownerTag(task)}
         <span class="due${overdue}">${formatDate(task.dueDate)}</span>
+        ${ownerTag(task)}
+      </div>
+      <div class="task-meta">
+        ${issueKey(task)}
+        <span class="spacer"></span>
+        ${priorityBadge(task)}
+        ${avatarHtml(task.ownerName || currentUser?.username)}
       </div>
     </div>`
 }

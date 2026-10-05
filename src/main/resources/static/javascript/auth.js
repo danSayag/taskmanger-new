@@ -23,7 +23,7 @@ async function postAuth(path, payload) {
         }
         throw new Error(detail)
     }
-    return response.status === 201 ? null : response.json()
+    return response.json()
 }
 
 const loginForm = document.getElementById('login-form')
@@ -69,8 +69,9 @@ if (signupForm) {
             return
         }
         try {
-            await postAuth('signup', {username, email, password})
-            window.location.href = './login.html'
+            const {token} = await postAuth('signup', {username, email, password})
+            localStorage.setItem('token', token)
+            window.location.href = './index.html'
         } catch (err) {
             showError(err.message)
         }

@@ -2,6 +2,7 @@ package org.example.taskmanger.service;
 
 import org.example.taskmanger.dto.CreateUserDto;
 import org.example.taskmanger.dto.UserDto;
+import org.example.taskmanger.dto.UserSummaryDto;
 import org.example.taskmanger.exception.UserNotFoundException;
 import org.example.taskmanger.model.Role;
 import org.example.taskmanger.model.User;
@@ -40,6 +41,12 @@ public class UserService {
                 .toList();
     }
 
+    // every user, with only their id and username
+    public List<UserSummaryDto> getUserSummaries() {
+        // TODO: load all users and map each one to a UserSummaryDto
+        throw new UnsupportedOperationException("TODO");
+    }
+
     public UserDto createUser(CreateUserDto input) {
         if (userRepository.findByEmail(input.email()).isPresent()) {
             throw new IllegalArgumentException("Email already registered");
@@ -50,6 +57,7 @@ public class UserService {
         User user = new User(input.username(), passwordEncoder.encode(input.password()), input.email());
         user.setEnabled(true);
         user.setRole(input.role());
+        
         return toDto(userRepository.save(user));
     }
 

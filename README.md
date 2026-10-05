@@ -101,7 +101,7 @@ Errors are returned as RFC 7807 `ProblemDetail` JSON by a global exception handl
 
 | Method | Path | Description |
 |---|---|---|
-| `POST` | `/auth/signup` | Register. Body: `{ "username", "email", "password" }` (password at least 8 characters) |
+| `POST` | `/auth/signup` | Register. Body: `{ "username", "email", "password" }` (password at least 8 characters). Returns `{ "token", "expiresIn" }` so the new user is logged in right away |
 | `POST` | `/auth/login` | Log in. Body: `{ "username", "password" }`; `username` can also be the email. Returns `{ "token", "expiresIn" }` |
 
 ### Tasks
