@@ -2,6 +2,7 @@ package org.example.taskmanger.service;
 
 import org.example.taskmanger.dto.CreateUserDto;
 import org.example.taskmanger.dto.UserDto;
+import org.example.taskmanger.dto.UserSummaryDto;
 import org.example.taskmanger.exception.UserNotFoundException;
 import org.example.taskmanger.model.Role;
 import org.example.taskmanger.model.User;
@@ -38,6 +39,12 @@ public class UserService {
         return StreamSupport.stream(userRepository.findAll().spliterator(), false)
                 .map(this::toDto)
                 .toList();
+    }
+
+    // every user, with only their id and username
+    public List<UserSummaryDto> getUserSummaries() {
+        // TODO: load all users and map each one to a UserSummaryDto
+        throw new UnsupportedOperationException("TODO");
     }
 
     public UserDto createUser(CreateUserDto input) {

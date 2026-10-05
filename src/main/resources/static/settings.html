@@ -1,0 +1,52 @@
+<html>
+<head>
+    <script src="./javascript/guard.js"></script>
+    <meta charset="utf-8">
+    <script src="./javascript/i18n.js"></script>
+    <script src="./javascript/theme.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tasks &middot; Project settings</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/screens.css">
+    <link rel="stylesheet" href="./css/jira.css">
+    <link rel="stylesheet" href="./css/sidebar.css">
+</head>
+
+<body>
+
+<!--
+  TODO: Project settings page (placeholder - linked from the sidebar)
+  Edit the current project: name, key, description, and who is a member.
+  Depends on Projects being implemented first (see projects.html).
+  Backend: PUT /projects/{id}, plus member endpoints such as POST/DELETE
+    /projects/{id}/members/{userId}, restricted to the project owner or admins.
+  Frontend: a form like the task dialog fields (reuse the .field styles).
+  When it's done, remove `soon: true` from this page's entry in javascript/sidebar.js.
+-->
+
+<div class="container">
+    <div class="board">
+        <div class="topbar">
+            <label id="task-label" data-i18n="nav.brand">Tasks</label>
+            <span class="spacer" style="margin-inline-start: auto"></span>
+            <button type="button" class="btn" id="logout-btn" onclick="logout()" data-i18n="nav.logout">Log out</button>
+        </div>
+
+        <div class="placeholder-view">
+            <h1 data-i18n="nav.settings">Project settings</h1>
+            <div class="placeholder-card">
+                <span id="placeholder-icon"></span>
+                <h2 data-i18n="soon.title">Coming soon</h2>
+                <p data-i18n="soon.settings"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="./javascript/common.js"></script>
+<script src="./javascript/sidebar.js"></script>
+<script>
+    document.getElementById('placeholder-icon').innerHTML = sidebarIcon('settings')
+</script>
+</body>
+</html>

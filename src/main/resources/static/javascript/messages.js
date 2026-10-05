@@ -1,19 +1,26 @@
-// Direct messages between users. Needs common.js.
+// Conversations between users. Needs common.js.
 //
-// Backend endpoints this page expects (all need the JWT, like the task endpoints):
-//   GET  /users                         -> [{id, username}]                      everyone you can message
-//   GET  /messages/conversations        -> [{userId, username, lastMessage, lastSentAt, unreadCount}]
-//   GET  /messages/{userId}             -> [{id, senderId, recipientId, content, sentAt}]   oldest first
-//   POST /messages/{userId}  {content}  -> the created message
-//   PUT  /messages/{userId}/read        -> marks that user's messages to you as read (response body ignored)
+// Backend endpoints this page expects (all need the JWT, like the task endpoints).
+// Shapes match ConvoResponse / MessageResponse:
+//   ConvoResponse   = {convoId, messages: [MessageResponse]}
+//   MessageResponse = {messageId, senderId, getterId, content, sentAt?}   sentAt is optional (ISO string)
+//
+//   GET  /users                                -> [{id, username}]   everyone you can message
+//   GET  /convo                                -> [ConvoResponse]    your conversations (admins: all of them)
+//   POST /convo                {getterId, content} -> ConvoResponse  starts a conversation with its first message
+//   POST /convo/{convoId}/messages {content}   -> MessageResponse    adds a message; the server works out
+//                                                                    the getter (the other person in the convo)
+//
+// The sender is always the logged-in user; the server must take it from the token, never from the body.
 
-const MESSAGES_URL = BASE_URL + '/messages'
+const CONVO_URL = BASE_URL + '/convo'
 const POLL_MS = 5000
 
 let users = []
-let conversations = []
-let activeUserId = null
-let messages = []
+let convos = []
+// the open conversation; convoId is null for a new conversation that has no messages yet
+let active = null   // {convoId, otherId}
+let pending = []    // messages being sent, shown greyed out until the server answers
 
 // ---------- loading ----------
 
@@ -38,34 +45,72 @@ async function loadUsers() {
   renderUserPicker()
 }
 
-async function loadConversations() {
+async function loadConvos({scrollToEnd = false} = {}) {
+  let loaded
   try {
-    conversations = (await request(`${MESSAGES_URL}/conversations`)) || []
+    loaded = await request(CONVO_URL)
   } catch (err) {
     console.error('Error loading conversations', err)
     if (isMissingEndpoint(err)) showUnavailable()
     return
   }
+  if (!Array.isArray(loaded)) return
+
+  const before = active?.convoId != null ? lastMessageId(findConvo(active.convoId)) : null
+  convos = loaded
   renderConversations()
+  if (active?.convoId != null) {
+    const changed = lastMessageId(findConvo(active.convoId)) !== before
+    if (changed || scrollToEnd) renderThread(scrollToEnd)
+  }
 }
 
-async function loadThread({scrollToEnd = false} = {}) {
-  if (activeUserId == null) return
-  const userId = activeUserId
-  let loaded
-  try {
-    loaded = (await request(`${MESSAGES_URL}/${userId}`)) || []
-  } catch (err) {
-    console.error('Error loading messages', err)
-    if (isMissingEndpoint(err)) showUnavailable()
-    return
-  }
-  if (userId !== activeUserId) return   // switched conversation while loading
+// ---------- conversation helpers ----------
 
-  const changed = loaded.length !== messages.length ||
-    loaded[loaded.length - 1]?.id !== messages[messages.length - 1]?.id
-  messages = loaded
-  if (changed || scrollToEnd) renderThread(scrollToEnd)
+function findConvo(convoId) {
+  return convos.find(c => c.convoId === convoId)
+}
+
+function messagesOf(convo) {
+  return [...(convo?.messages || [])].sort((a, b) => a.messageId - b.messageId)
+}
+
+function lastMessage(convo) {
+  const list = messagesOf(convo)
+  return list[list.length - 1]
+}
+
+function lastMessageId(convo) {
+  return lastMessage(convo)?.messageId ?? null
+}
+
+// everyone who sent or got a message in the conversation
+function participants(convo) {
+  const ids = new Set()
+  for (const m of convo.messages || []) {
+    ids.add(m.senderId)
+    ids.add(m.getterId)
+  }
+  return [...ids]
+}
+
+function isMember(convo) {
+  return participants(convo).includes(currentUser?.id)
+}
+
+// the person on the other side; null when you're an admin reading someone else's conversation
+function otherIdOf(convo) {
+  if (!isMember(convo)) return null
+  return participants(convo).find(id => id !== currentUser?.id) ?? null
+}
+
+function titleOf(convo) {
+  if (isMember(convo)) return nameOf(otherIdOf(convo))
+  return participants(convo).map(nameOf).join(' ↔ ')
+}
+
+function convoByUser(userId) {
+  return convos.find(c => isMember(c) && otherIdOf(c) === userId)
 }
 
 // ---------- rendering ----------
@@ -75,8 +120,8 @@ function initials(name) {
 }
 
 function nameOf(userId) {
-  return users.find(u => u.id === userId)?.username ||
-    conversations.find(c => c.userId === userId)?.username || t('msg.unknownUser')
+  if (userId === currentUser?.id) return currentUser.username
+  return users.find(u => u.id === userId)?.username || t('msg.unknownUser')
 }
 
 function formatTime(value) {
@@ -112,49 +157,68 @@ function renderUserPicker() {
 
 function renderConversations() {
   const query = document.getElementById('search').value.trim().toLowerCase()
-  const shown = conversations
-    .filter(c => !query || c.username.toLowerCase().includes(query))
-    .sort((a, b) => new Date(b.lastSentAt) - new Date(a.lastSentAt))
+  const shown = convos
+    .filter(c => !query || titleOf(c).toLowerCase().includes(query))
+    .sort((a, b) => (lastMessageId(b) ?? 0) - (lastMessageId(a) ?? 0))
+
+  // a new conversation isn't on the server until its first message, so list it separately
+  const draft = active && active.convoId == null && (!query || nameOf(active.otherId).toLowerCase().includes(query))
+    ? `<li class="conversation is-active" data-user="${active.otherId}">
+         <span class="avatar">${escapeHtml(initials(nameOf(active.otherId)))}</span>
+         <div class="conversation-body">
+           <div class="conversation-top"><span class="conversation-name">${escapeHtml(nameOf(active.otherId))}</span></div>
+         </div>
+       </li>`
+    : ''
 
   const list = document.getElementById('conversation-list')
-  if (!shown.length) {
+  if (!shown.length && !draft) {
     list.innerHTML = `<li class="conversation-empty">${t(query ? 'msg.noMatches' : 'msg.noConversations')}</li>`
     return
   }
-  list.innerHTML = shown.map(c => `
-    <li class="conversation ${c.userId === activeUserId ? 'is-active' : ''} ${c.unreadCount ? 'is-unread' : ''}"
-        data-id="${c.userId}">
-      <span class="avatar">${escapeHtml(initials(c.username))}</span>
-      <div class="conversation-body">
-        <div class="conversation-top">
-          <span class="conversation-name">${escapeHtml(c.username)}</span>
-          <span class="conversation-time">${c.lastSentAt ? formatShort(c.lastSentAt) : ''}</span>
+  list.innerHTML = draft + shown.map(c => {
+    const title = titleOf(c)
+    const last = lastMessage(c)
+    return `
+      <li class="conversation ${c.convoId === active?.convoId ? 'is-active' : ''}" data-id="${c.convoId}">
+        <span class="avatar">${escapeHtml(initials(title))}</span>
+        <div class="conversation-body">
+          <div class="conversation-top">
+            <span class="conversation-name">${escapeHtml(title)}</span>
+            <span class="conversation-time">${last?.sentAt ? formatShort(last.sentAt) : ''}</span>
+          </div>
+          <div class="conversation-bottom">
+            <span class="conversation-preview">${escapeHtml(last?.content || '')}</span>
+          </div>
         </div>
-        <div class="conversation-bottom">
-          <span class="conversation-preview">${escapeHtml(c.lastMessage || '')}</span>
-          ${c.unreadCount ? `<span class="unread-count">${c.unreadCount}</span>` : ''}
-        </div>
-      </div>
-    </li>`).join('')
+      </li>`
+  }).join('')
 }
 
 function renderThread(scrollToEnd) {
+  if (!active) return
   const box = document.getElementById('thread-messages')
   const nearBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 60
+  const shown = [...messagesOf(findConvo(active.convoId)), ...pending]
 
   let html = ''
   let lastDay = null
-  for (const m of messages) {
-    const day = formatDay(m.sentAt)
-    if (day !== lastDay) {
-      html += `<div class="day-divider"><span>${day}</span></div>`
-      lastDay = day
+  for (const m of shown) {
+    if (m.sentAt) {
+      const day = formatDay(m.sentAt)
+      if (day !== lastDay) {
+        html += `<div class="day-divider"><span>${day}</span></div>`
+        lastDay = day
+      }
     }
     const mine = m.senderId === currentUser?.id
+    const time = m.pending ? t('msg.sending') : (m.sentAt ? formatTime(m.sentAt) : '')
+    // in someone else's conversation (admin view) say who wrote each message
+    const author = !mine && active.otherId == null ? `${escapeHtml(nameOf(m.senderId))} · ` : ''
     html += `
       <div class="message ${mine ? 'is-mine' : ''} ${m.pending ? 'is-pending' : ''}">
         <div class="bubble">${escapeHtml(m.content)}</div>
-        <span class="message-time">${m.pending ? t('msg.sending') : formatTime(m.sentAt)}</span>
+        <span class="message-time">${author}${time}</span>
       </div>`
   }
   box.innerHTML = html || `<p class="thread-start">${t('msg.sayHello')}</p>`
@@ -165,29 +229,45 @@ function renderThread(scrollToEnd) {
 
 // ---------- actions ----------
 
-async function openConversation(userId) {
-  activeUserId = userId
-  messages = []
-  history.replaceState(null, '', `#user=${userId}`)
-
-  const name = nameOf(userId)
+function showThread(title, canWrite) {
   document.getElementById('thread-empty').hidden = true
   document.getElementById('thread-head').hidden = false
   document.getElementById('thread-messages').hidden = false
-  document.getElementById('compose').hidden = false
-  document.getElementById('thread-name').textContent = name
-  document.getElementById('thread-avatar').textContent = initials(name)
+  document.getElementById('compose').hidden = !canWrite
+  document.getElementById('thread-name').textContent = title
+  document.getElementById('thread-avatar').textContent = initials(title)
   document.getElementById('messages-view').classList.add('has-thread')
   document.getElementById('thread-messages').innerHTML = ''
-
+  pending = []
   renderConversations()
-  await loadThread({scrollToEnd: true})
-  document.getElementById('compose-text').focus()
-  markRead(userId)
+  renderThread(true)
+  if (canWrite) document.getElementById('compose-text').focus()
+}
+
+function openConvo(convoId) {
+  const convo = findConvo(convoId)
+  if (!convo) return
+  active = {convoId, otherId: otherIdOf(convo)}
+  history.replaceState(null, '', `#convo=${convoId}`)
+  // admins can read other people's conversations but not write in them
+  showThread(titleOf(convo), isMember(convo))
+}
+
+// opens the conversation with this user, or an empty one if you haven't talked yet
+function openWithUser(userId) {
+  const existing = convoByUser(userId)
+  if (existing) {
+    openConvo(existing.convoId)
+    return
+  }
+  active = {convoId: null, otherId: userId}
+  history.replaceState(null, '', `#user=${userId}`)
+  showThread(nameOf(userId), true)
 }
 
 function closeConversation() {
-  activeUserId = null
+  active = null
+  pending = []
   history.replaceState(null, '', location.pathname)
   document.getElementById('messages-view').classList.remove('has-thread')
   document.getElementById('thread-empty').hidden = false
@@ -197,46 +277,45 @@ function closeConversation() {
   renderConversations()
 }
 
-async function markRead(userId) {
-  const conversation = conversations.find(c => c.userId === userId)
-  if (!conversation?.unreadCount) return
-  try {
-    await request(`${MESSAGES_URL}/${userId}/read`, {method: 'PUT'})
-    conversation.unreadCount = 0
-    renderConversations()
-  } catch (err) {
-    console.error('Error marking messages as read', err)
-  }
-}
-
 async function sendMessage(event) {
   event.preventDefault()
   const input = document.getElementById('compose-text')
   const content = input.value.trim()
-  if (!content || activeUserId == null) return
+  if (!content || !active) return
+  const target = active
 
-  // show the message right away, replace it with the saved one when the server answers
-  const pending = {id: `pending-${Date.now()}`, senderId: currentUser?.id, content,
-    sentAt: new Date().toISOString(), pending: true}
-  messages.push(pending)
+  // show the message right away; the real one arrives with the server's answer
+  const draft = {messageId: `pending-${Date.now()}`, senderId: currentUser?.id, content, pending: true}
+  pending.push(draft)
   renderThread(true)
   input.value = ''
   autoGrow(input)
 
   try {
-    const saved = await request(`${MESSAGES_URL}/${activeUserId}`, {
-      method: 'POST',
-      body: JSON.stringify({content})
-    })
-    messages[messages.indexOf(pending)] = saved && saved !== true ? saved : {...pending, pending: false}
+    if (target.convoId == null) {
+      // first message: creates the conversation
+      const created = await request(CONVO_URL, {
+        method: 'POST',
+        body: JSON.stringify({getterId: target.otherId, content})
+      })
+      if (created?.convoId != null && active === target) {
+        active.convoId = created.convoId
+        history.replaceState(null, '', `#convo=${created.convoId}`)
+      }
+    } else {
+      await request(`${CONVO_URL}/${target.convoId}/messages`, {
+        method: 'POST',
+        body: JSON.stringify({content})
+      })
+    }
   } catch (err) {
     console.error('Error sending message', err)
-    messages.splice(messages.indexOf(pending), 1)
-    input.value = content
-    alert(t('err.sendMessage'))
+    if (active === target) input.value = content
+    alert(err.detail || t('err.sendMessage'))
   }
-  renderThread(true)
-  loadConversations()
+  pending = pending.filter(m => m !== draft)
+  await loadConvos({scrollToEnd: true})
+  if (active === target) renderThread(true)
 }
 
 function autoGrow(textarea) {
@@ -248,18 +327,14 @@ function autoGrow(textarea) {
 
 document.getElementById('conversation-list').addEventListener('click', event => {
   const item = event.target.closest('.conversation')
-  if (item) openConversation(Number(item.dataset.id))
+  if (!item) return
+  if (item.dataset.id) openConvo(Number(item.dataset.id))
 })
 
 document.getElementById('new-conversation').addEventListener('change', event => {
   const userId = Number(event.target.value)
   event.target.value = ''
-  if (!userId) return
-  // show the new conversation in the list until the first message makes it real
-  if (!conversations.some(c => c.userId === userId)) {
-    conversations.push({userId, username: nameOf(userId), lastMessage: '', lastSentAt: new Date().toISOString(), unreadCount: 0})
-  }
-  openConversation(userId)
+  if (userId) openWithUser(userId)
 })
 
 document.getElementById('compose').addEventListener('submit', sendMessage)
@@ -270,21 +345,18 @@ document.getElementById('compose-text').addEventListener('input', event => autoG
 document.getElementById('thread-back').addEventListener('click', closeConversation)
 document.getElementById('search').addEventListener('input', renderConversations)
 
-// check for new messages every few seconds (skipped while the tab is hidden)
+// check for new messages every few seconds (skipped while the tab is hidden or a send is in flight)
 const pollTimer = setInterval(() => {
-  if (document.hidden) return
-  loadConversations()
-  loadThread()
+  if (document.hidden || pending.length) return
+  loadConvos()
 }, POLL_MS)
 
 currentUserReady.then(async () => {
-  await Promise.all([loadUsers(), loadConversations()])
-  // messages.html#user=5 opens that conversation, e.g. from the admin panel
-  const linked = Number(new URLSearchParams(location.hash.slice(1)).get('user'))
-  if (linked) {
-    if (!conversations.some(c => c.userId === linked)) {
-      conversations.push({userId: linked, username: nameOf(linked), lastMessage: '', lastSentAt: new Date().toISOString(), unreadCount: 0})
-    }
-    openConversation(linked)
-  }
+  await Promise.all([loadUsers(), loadConvos()])
+  // messages.html#convo=3 opens that conversation; #user=5 opens the one with that user (used by the admin panel)
+  const params = new URLSearchParams(location.hash.slice(1))
+  const convoId = Number(params.get('convo'))
+  const userId = Number(params.get('user'))
+  if (convoId && findConvo(convoId)) openConvo(convoId)
+  else if (userId) openWithUser(userId)
 })

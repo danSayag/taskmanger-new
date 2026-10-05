@@ -1,0 +1,1556 @@
+/* Jira-style theme. Loaded last on every page, so it overrides style.css, screens.css,
+   messages.css and auth.css without changing their structure. Colors follow Atlassian's palette. */
+
+:root {
+    --j-text: #172b4d;
+    --j-text-subtle: #44546f;
+    --j-text-subtlest: #626f86;
+    --j-border: #dcdfe4;
+    --j-border-input: #8590a2;
+    --j-bg: #ffffff;
+    --j-bg-sunken: #f7f8f9;
+    --j-bg-neutral: #091e420f;
+    --j-bg-neutral-hover: #091e4224;
+    --j-blue: #0c66e4;
+    --j-blue-hover: #0055cc;
+    --j-blue-subtle: #e9f2ff;
+    --j-blue-text: #0c66e4;
+    --j-red: #c9372c;
+    --j-red-hover: #ae2e24;
+    --j-shadow-card: 0 1px 1px #091e4240, 0 0 1px #091e424f;
+    --j-shadow-overlay: 0 8px 12px #091e4226, 0 0 1px #091e424f;
+    --j-bg-raised: #ffffff;
+    --j-bg-raised-hover: #f7f8f9;
+    --j-on-bold: #ffffff;
+    --j-red-subtle: #ffeceb;
+    --j-red-text: #ae2e24;
+    --j-green: #22a06b;
+    --j-loz-todo-bg: #dcdfe4;
+    --j-loz-todo-text: #44546f;
+    --j-loz-progress-bg: #cce0ff;
+    --j-loz-progress-text: #0055cc;
+    --j-loz-done-bg: #baf3db;
+    --j-loz-done-text: #216e4e;
+    --j-blanket: #091e427d;
+    color-scheme: light;
+    --j-radius: 3px;
+    --j-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans", Ubuntu, "Helvetica Neue", sans-serif;
+}
+
+/* ================= dark mode =================
+   Follows the system setting unless the user picked one with the theme button (theme.js sets data-theme). */
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --j-text: #b6c2cf;
+        --j-text-subtle: #9fadbc;
+        --j-text-subtlest: #8c9bab;
+        --j-border: #a6c5e229;
+        --j-border-input: #738496;
+        --j-bg: #1d2125;
+        --j-bg-sunken: #161a1d;
+        --j-bg-raised: #22272b;
+        --j-bg-raised-hover: #282e33;
+        --j-bg-neutral: #a1bdd914;
+        --j-bg-neutral-hover: #a6c5e229;
+        --j-blue: #579dff;
+        --j-blue-hover: #85b8ff;
+        --j-blue-subtle: #1c2b41;
+        --j-blue-text: #579dff;
+        --j-on-bold: #1d2125;
+        --j-red: #f87168;
+        --j-red-hover: #fd9891;
+        --j-red-subtle: #42221f;
+        --j-red-text: #fd9891;
+        --j-green: #4bce97;
+        --j-loz-todo-bg: #a1bdd914;
+        --j-loz-todo-text: #9fadbc;
+        --j-loz-progress-bg: #09326c;
+        --j-loz-progress-text: #85b8ff;
+        --j-loz-done-bg: #164b35;
+        --j-loz-done-text: #7ee2b8;
+        --j-blanket: #10121499;
+        --j-shadow-card: 0 1px 1px #03040480, 0 0 1px #03040480;
+        --j-shadow-overlay: 0 0 0 1px #bcd6f01f, 0 8px 12px #0304045c, 0 0 1px #03040480;
+        color-scheme: dark;
+    }
+}
+
+:root[data-theme="dark"] {
+    --j-text: #b6c2cf;
+    --j-text-subtle: #9fadbc;
+    --j-text-subtlest: #8c9bab;
+    --j-border: #a6c5e229;
+    --j-border-input: #738496;
+    --j-bg: #1d2125;
+    --j-bg-sunken: #161a1d;
+    --j-bg-raised: #22272b;
+    --j-bg-raised-hover: #282e33;
+    --j-bg-neutral: #a1bdd914;
+    --j-bg-neutral-hover: #a6c5e229;
+    --j-blue: #579dff;
+    --j-blue-hover: #85b8ff;
+    --j-blue-subtle: #1c2b41;
+    --j-blue-text: #579dff;
+    --j-on-bold: #1d2125;
+    --j-red: #f87168;
+    --j-red-hover: #fd9891;
+    --j-red-subtle: #42221f;
+    --j-red-text: #fd9891;
+    --j-green: #4bce97;
+    --j-loz-todo-bg: #a1bdd914;
+    --j-loz-todo-text: #9fadbc;
+    --j-loz-progress-bg: #09326c;
+    --j-loz-progress-text: #85b8ff;
+    --j-loz-done-bg: #164b35;
+    --j-loz-done-text: #7ee2b8;
+    --j-blanket: #10121499;
+    --j-shadow-card: 0 1px 1px #03040480, 0 0 1px #03040480;
+    --j-shadow-overlay: 0 0 0 1px #bcd6f01f, 0 8px 12px #0304045c, 0 0 1px #03040480;
+    color-scheme: dark;
+}
+
+/* ================= page frame ================= */
+
+body {
+    padding: 0;
+    background: var(--j-bg);
+    color: var(--j-text);
+    font-family: var(--j-font);
+    font-size: 14px;
+    line-height: 1.43;
+}
+
+.container {
+    max-width: none;
+}
+
+.board {
+    min-height: 100vh;
+    border: none;
+    border-radius: 0;
+    background: var(--j-bg);
+    overflow: visible;
+}
+
+/* ================= top navigation ================= */
+
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    height: 56px;
+    gap: 2px;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--j-border);
+    background: var(--j-bg);
+}
+
+#task-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-inline-end: 16px;
+    color: var(--j-text);
+    font-size: 16px;
+    font-weight: 653;
+    letter-spacing: -.2px;
+}
+
+/* the blue Jira-like logo tile */
+#task-label::before {
+    content: "\2713";
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    margin: 0;
+    border-radius: 4px;
+    background: linear-gradient(135deg, #2684ff, #0052cc);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.view-tab {
+    position: relative;
+    height: 56px;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 10px;
+    border: none;
+    border-radius: 0;
+    color: var(--j-text-subtle);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.view-tab:hover {
+    background: transparent;
+    color: var(--j-text);
+}
+
+.view-tab:hover::after,
+.view-tab.is-active::after {
+    content: "";
+    position: absolute;
+    inset-inline: 6px;
+    bottom: 0;
+    height: 3px;
+    border-radius: 3px 3px 0 0;
+    background: var(--j-border);
+}
+
+.view-tab.is-active {
+    background: transparent;
+    color: var(--j-blue-text);
+    font-weight: 500;
+}
+
+.view-tab.is-active::after {
+    background: var(--j-blue);
+}
+
+#search {
+    width: 240px;
+    height: 32px;
+    border: 1px solid var(--j-border-input);
+    border-radius: var(--j-radius);
+    background-color: var(--j-bg);
+    color: var(--j-text);
+    font-size: 14px;
+}
+
+#search:hover {
+    background-color: var(--j-bg-sunken);
+}
+
+#search:focus {
+    border-color: var(--j-blue);
+    box-shadow: inset 0 0 0 1px var(--j-blue);
+    background-color: var(--j-bg);
+}
+
+#search::placeholder {
+    color: var(--j-text-subtlest);
+}
+
+#new-task-btn {
+    height: 32px;
+    padding: 0 12px;
+    margin-inline-start: 8px;
+    border-radius: var(--j-radius);
+    background: var(--j-blue);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+#new-task-btn:hover {
+    background: var(--j-blue-hover);
+}
+
+#logout-btn,
+#lang-picker {
+    height: 32px;
+    border-radius: var(--j-radius);
+}
+
+#lang-picker {
+    border: none;
+    background: var(--j-bg-neutral);
+    color: var(--j-text-subtle);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+#lang-picker:hover {
+    background: var(--j-bg-neutral-hover);
+}
+
+/* ================= buttons ================= */
+
+.btn {
+    height: 32px;
+    padding: 0 12px;
+    border: none;
+    border-radius: var(--j-radius);
+    background: var(--j-bg-neutral);
+    color: var(--j-text-subtle);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.btn:hover {
+    background: var(--j-bg-neutral-hover);
+    color: var(--j-text);
+}
+
+.btn-primary {
+    background: var(--j-blue);
+    color: var(--j-on-bold);
+}
+
+.btn-primary:hover {
+    background: var(--j-blue-hover);
+    color: var(--j-on-bold);
+}
+
+.btn-danger {
+    background: var(--j-red);
+    color: var(--j-on-bold);
+}
+
+.btn-danger:hover {
+    background: var(--j-red-hover);
+    color: var(--j-on-bold);
+}
+
+.btn-link,
+.btn-link:hover {
+    background: transparent;
+    color: var(--j-blue-text);
+}
+
+.btn-link-danger,
+.btn-link-danger:hover {
+    height: 32px;
+    padding: 0 12px;
+    background: transparent;
+    color: var(--j-red);
+}
+
+.btn-link-danger:hover {
+    background: var(--j-red-subtle);
+    text-decoration: none;
+}
+
+/* ================= board: header and filters ================= */
+
+.board-view,
+.list-view {
+    padding: 20px 40px 32px;
+}
+
+/* breadcrumb + page title, like a Jira project page */
+.board-view::before,
+.list-view::before {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--j-text-subtlest);
+    font-size: 14px;
+    content: "Projects  /  Tasks";
+    white-space: pre;
+}
+
+.top-main-view,
+.list-toolbar {
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.filter-pill {
+    height: 32px;
+    padding: 0 4px 0 10px;
+    border: none;
+    border-radius: var(--j-radius);
+    background: var(--j-bg-neutral);
+    color: var(--j-text-subtle);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.filter-pill:hover {
+    background: var(--j-bg-neutral-hover);
+}
+
+.filter-pill select {
+    color: var(--j-text);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+#task-count,
+#result-count {
+    color: var(--j-text-subtlest);
+    font-size: 14px;
+}
+
+/* ================= board: columns ================= */
+
+/* the board fills the window under the top bar; each column has a fixed height and its cards scroll inside it */
+.board-view {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 56px);
+}
+
+#task-board {
+    flex: 1;
+    min-height: 0;
+    grid-template-columns: repeat(3, minmax(240px, 1fr));
+    align-items: stretch;
+    gap: 8px;
+}
+
+.column {
+    gap: 4px;
+    min-height: 0;
+    height: 100%;
+    padding: 4px;
+    border: none;
+    border-radius: 6px;
+    background: var(--j-bg-sunken);
+}
+
+.column-head {
+    gap: 6px;
+    height: 40px;
+    padding: 0 8px;
+}
+
+.column-head h2 {
+    color: var(--j-text-subtle);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .3px;
+    text-transform: uppercase;
+}
+
+.column-count {
+    color: var(--j-text-subtle);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Jira has no colored dots; the Done column gets a green check instead */
+.dot {
+    display: none;
+}
+
+.column[data-status="done"] .column-head .column-count::after {
+    content: " \2713";
+    color: var(--j-green);
+}
+
+.column-content {
+    flex: 1;
+    min-height: 0;
+    gap: 4px;
+    /* a little room so the card shadows aren't clipped by the scroll area */
+    padding: 2px;
+    margin: -2px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.column-head,
+.add-task {
+    flex-shrink: 0;
+}
+
+.column.drop-target {
+    border: none;
+    background: var(--j-blue-subtle);
+    box-shadow: inset 0 0 0 2px var(--j-blue);
+}
+
+.add-task {
+    justify-content: flex-start;
+    height: 32px;
+    padding: 0 8px;
+    border: none;
+    border-radius: var(--j-radius);
+    color: var(--j-text-subtle);
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0;
+}
+
+.column:hover .add-task,
+.add-task:focus {
+    opacity: 1;
+}
+
+.add-task:hover {
+    background: var(--j-bg-neutral-hover);
+    color: var(--j-text);
+}
+
+/* ================= board: issue cards ================= */
+
+.task-card {
+    padding: 12px 12px 10px;
+    border: none;
+    border-radius: var(--j-radius);
+    background: var(--j-bg);
+    box-shadow: var(--j-shadow-card);
+}
+
+.task-card:hover {
+    border: none;
+    background: var(--j-bg-raised-hover);
+    box-shadow: var(--j-shadow-card);
+}
+
+.task-title {
+    padding-inline-end: 20px;
+    color: var(--j-text);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    overflow-wrap: anywhere;
+}
+
+.task-desc {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-top: 2px;
+    color: var(--j-text-subtlest);
+    font-size: 12px;
+}
+
+.task-meta {
+    gap: 6px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.card-menu {
+    top: 8px;
+    opacity: 0;
+    color: var(--j-text-subtle);
+    font-size: 16px;
+}
+
+.task-card:hover .card-menu {
+    opacity: 1;
+}
+
+.card-menu:hover {
+    background: var(--j-bg-neutral-hover);
+    color: var(--j-text);
+}
+
+/* issue type icon + key, e.g. [✓] TASK-12 */
+.issue-type {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    border-radius: 2px;
+    background: #4bade8;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.issue-key {
+    color: var(--j-text-subtle);
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.column[data-status="done"] .task-card {
+    background: var(--j-bg);
+}
+
+.column[data-status="done"] .task-title,
+.column[data-status="done"] .task-desc {
+    color: var(--j-text);
+    text-decoration: none;
+}
+
+.column[data-status="done"] .issue-key {
+    text-decoration: line-through;
+}
+
+.task-meta .spacer {
+    margin-inline-start: auto;
+}
+
+/* due date as a small lozenge */
+.due {
+    padding: 0 4px;
+    border-radius: var(--j-radius);
+    background: var(--j-bg-neutral);
+    color: var(--j-text-subtle);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.due::before {
+    content: none;
+}
+
+.due.overdue {
+    background: var(--j-red-subtle);
+    color: var(--j-red-text);
+}
+
+/* ================= priority icons (replace the colored badges) ================= */
+
+.badge,
+.badge-high,
+.badge-medium,
+.badge-low {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px;
+    border-radius: var(--j-radius);
+    background: transparent;
+    color: var(--j-text-subtle);
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0;
+}
+
+.badge-button:hover {
+    filter: none;
+    background: var(--j-bg-neutral-hover);
+}
+
+.priority-icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+/* on cards only the icon is shown, like Jira; the label stays in the tooltip and the list view */
+.task-card .priority-label {
+    display: none;
+}
+
+/* ================= avatars ================= */
+
+.avatar,
+.j-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.avatar {
+    width: 32px;
+    height: 32px;
+    background: var(--j-blue);
+    color: var(--j-on-bold);
+    font-size: 12px;
+}
+
+.owner-tag {
+    padding: 0 4px;
+    border-radius: var(--j-radius);
+    background: var(--j-bg-neutral);
+    color: var(--j-text-subtle);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* ================= list view (Jira's issue navigator) ================= */
+
+#task-list, #user-list {
+    font-size: 14px;
+}
+
+#task-list thead th, #user-list thead th {
+    padding: 8px;
+    border-bottom: 2px solid var(--j-border);
+    color: var(--j-text-subtle);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+#task-list tbody td, #user-list tbody td {
+    padding: 8px;
+    border-bottom: 1px solid var(--j-border);
+}
+
+#task-list tbody tr:hover, #user-list tbody tr:hover {
+    background: var(--j-bg-sunken);
+}
+
+.row-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--j-text);
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.row-title .issue-key {
+    color: var(--j-blue-text);
+    font-weight: 500;
+}
+
+.row-desc {
+    margin-inline-start: 24px;
+    color: var(--j-text-subtlest);
+    font-size: 12px;
+}
+
+tr.is-done .row-title {
+    color: var(--j-text);
+    text-decoration: none;
+}
+
+tr.is-done .row-title .issue-key {
+    text-decoration: line-through;
+}
+
+.cell-due.overdue {
+    color: var(--j-red);
+}
+
+.row-check {
+    accent-color: var(--j-blue);
+}
+
+.row-action {
+    padding: 4px 6px;
+    color: var(--j-text-subtle);
+    font-size: 14px;
+}
+
+.row-action:hover {
+    background: var(--j-bg-neutral-hover);
+    color: var(--j-text);
+}
+
+/* sortable column header (Due) */
+.th-sort {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin: -4px -6px;
+    padding: 4px 6px;
+    border: none;
+    border-radius: var(--j-radius);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
+.th-sort:hover {
+    background: var(--j-bg-neutral-hover);
+    color: var(--j-text);
+}
+
+.sort-arrow {
+    color: var(--j-blue);
+    font-size: 14px;
+    line-height: 1;
+}
+
+th[aria-sort="none"] .sort-arrow {
+    color: var(--j-text-subtlest);
+    opacity: .6;
+}
+
+/* hover menus in the list view: "···" (Edit / Delete) and Priority (High / Medium / Low) */
+#task-list .col-actions {
+    width: 48px;
+}
+
+.hover-menu {
+    position: relative;
+    display: inline-block;
+}
+
+.row-more {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: var(--j-radius);
+    background: transparent;
+    color: var(--j-text-subtle);
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.priority-trigger {
+    height: 32px;
+    padding: 0 6px;
+    border: none;
+    cursor: pointer;
+}
+
+.priority-trigger .priority-label {
+    color: var(--j-text);
+    font-size: 14px;
+}
+
+.hover-menu:hover .row-more,
+.hover-menu:focus-within .row-more {
+    background: var(--j-text);
+    color: var(--j-bg);
+}
+
+.hover-menu:hover .priority-trigger,
+.hover-menu:focus-within .priority-trigger {
+    background: var(--j-bg-neutral-hover);
+}
+
+.row-menu {
+    position: absolute;
+    top: 100%;
+    inset-inline-end: 0;
+    z-index: 10;
+    display: none;
+    min-width: 140px;
+    margin-top: 4px;
+    padding: 4px 0;
+    border-radius: var(--j-radius);
+    background: var(--j-bg);
+    box-shadow: var(--j-shadow-overlay);
+    text-align: start;
+}
+
+/* invisible strip over the 4px gap, so the menu stays open while the mouse moves into it */
+.row-menu::before {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: -6px;
+    height: 6px;
+}
+
+.hover-menu-start .row-menu {
+    inset-inline-start: 0;
+    inset-inline-end: auto;
+}
+
+.hover-menu:hover .row-menu,
+.hover-menu:focus-within .row-menu {
+    display: block;
+}
+
+.row-menu .row-action,
+.row-menu .menu-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    color: var(--j-text);
+    font: inherit;
+    font-size: 14px;
+    text-align: start;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.row-menu .row-action:hover,
+.row-menu .row-action:focus-visible,
+.row-menu .menu-item:hover,
+.row-menu .menu-item:focus-visible {
+    background: var(--j-bg-neutral);
+    outline: none;
+    box-shadow: inset 2px 0 0 var(--j-blue);
+}
+
+.row-menu .menu-item.is-current {
+    background: var(--j-blue-subtle);
+    color: var(--j-blue-text);
+    font-weight: 600;
+}
+
+.row-menu .row-action-danger {
+    color: var(--j-red);
+}
+
+/* Status and Due triggers look like plain text until hovered */
+.status-trigger,
+.due-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    margin-inline-start: -6px;
+    padding: 0 6px;
+    border: none;
+    border-radius: var(--j-radius);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
+.hover-menu:hover .status-trigger,
+.hover-menu:focus-within .status-trigger,
+.hover-menu:hover .due-trigger,
+.hover-menu:focus-within .due-trigger {
+    background: var(--j-bg-neutral-hover);
+}
+
+.trigger-chevron {
+    color: var(--j-text-subtle);
+    font-size: 10px;
+}
+
+.cell-due.overdue .due-trigger {
+    color: var(--j-red);
+    font-weight: 600;
+}
+
+/* faded date on the right of each quick choice, e.g. "Tomorrow   Oct 6" */
+.menu-item-hint {
+    margin-inline-start: auto;
+    padding-inline-start: 16px;
+    color: var(--j-text-subtlest);
+    font-size: 12px;
+}
+
+.row-menu .menu-item.is-current .menu-item-hint {
+    color: var(--j-blue-text);
+}
+
+/* the date field at the bottom of the Due menu */
+.menu-date {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 4px;
+    padding: 8px 16px 8px;
+    border-top: 1px solid var(--j-border);
+    color: var(--j-text-subtle);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.menu-date input {
+    height: 32px;
+    padding: 0 6px;
+    border: 1px solid var(--j-border-input);
+    border-radius: var(--j-radius);
+    color: var(--j-text);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.menu-date input:focus {
+    border-color: var(--j-blue);
+    box-shadow: inset 0 0 0 1px var(--j-blue);
+    outline: none;
+}
+
+/* status lozenges */
+.status {
+    padding: 0 4px;
+    border-radius: var(--j-radius);
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 16px;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+.status-todo {
+    background: var(--j-loz-todo-bg);
+    color: var(--j-loz-todo-text);
+}
+
+.status-inprogress {
+    background: var(--j-loz-progress-bg);
+    color: var(--j-loz-progress-text);
+}
+
+.status-done {
+    background: var(--j-loz-done-bg);
+    color: var(--j-loz-done-text);
+}
+
+.role-select {
+    height: 32px;
+    border: 1px solid var(--j-border-input);
+    border-radius: var(--j-radius);
+    font-size: 14px;
+}
+
+.list-footer {
+    color: var(--j-text-subtle);
+    font-size: 14px;
+}
+
+.rows-per-page select {
+    color: var(--j-text);
+    font-size: 14px;
+}
+
+.pager a {
+    min-width: 32px;
+    padding: 6px 8px;
+    border-radius: var(--j-radius);
+    color: var(--j-text-subtle);
+    text-align: center;
+}
+
+.pager a:hover {
+    background: var(--j-bg-neutral-hover);
+}
+
+.pager a.is-current {
+    background: var(--j-text);
+    color: var(--j-bg);
+}
+
+/* ================= modals ================= */
+
+.modal-backdrop {
+    background: var(--j-blanket);
+}
+
+.dialog {
+    max-width: 600px;
+    padding: 24px;
+    border-radius: 3px;
+    box-shadow: var(--j-shadow-overlay);
+}
+
+.dialog-confirm {
+    max-width: 400px;
+}
+
+.dialog-head {
+    margin-bottom: 20px;
+}
+
+.dialog-head h2 {
+    color: var(--j-text);
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.dialog-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin-top: -4px;
+    border-radius: var(--j-radius);
+    color: var(--j-text-subtle);
+    font-size: 16px;
+}
+
+.dialog-close:hover {
+    background: var(--j-bg-neutral-hover);
+}
+
+.dialog-confirm p {
+    color: var(--j-text);
+    font-size: 14px;
+}
+
+.dialog-foot {
+    margin-top: 24px;
+}
+
+/* ================= forms ================= */
+
+.field {
+    margin-bottom: 16px;
+}
+
+.field > label {
+    margin-bottom: 4px;
+    color: var(--j-text-subtle);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.field .req {
+    color: var(--j-red);
+}
+
+.field input[type="text"],
+.field input[type="date"],
+.field input[type="email"],
+.field input[type="password"],
+.field textarea,
+.field select {
+    min-height: 40px;
+    padding: 8px 6px;
+    border: 1px solid var(--j-border-input);
+    border-radius: var(--j-radius);
+    background: var(--j-bg);
+    color: var(--j-text);
+    font-size: 14px;
+}
+
+.field textarea {
+    min-height: 80px;
+}
+
+/* single-line inputs and the segmented control share one height, so fields side by side line up */
+.field input[type="text"],
+.field input[type="date"],
+.field input[type="email"],
+.field input[type="password"],
+.field select {
+    height: 40px;
+    padding-block: 0;
+}
+
+.field input:hover,
+.field textarea:hover,
+.field select:hover {
+    background: var(--j-bg-sunken);
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus,
+.field input[type="text"]:focus,
+.field input[type="email"]:focus,
+.field input[type="password"]:focus {
+    border-color: var(--j-blue);
+    box-shadow: inset 0 0 0 1px var(--j-blue);
+    background: var(--j-bg);
+}
+
+.field.has-error input,
+.field.has-error textarea {
+    border-color: var(--j-red);
+}
+
+.field-error {
+    color: var(--j-red);
+    font-size: 12px;
+}
+
+.segmented {
+    height: 40px;
+    border: 1px solid var(--j-border-input);
+    border-radius: var(--j-radius);
+}
+
+.segmented label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-inline-start-color: var(--j-border);
+    color: var(--j-text-subtle);
+    font-size: 14px;
+}
+
+.segmented input:checked + label {
+    background: var(--j-blue-subtle);
+    color: var(--j-blue-text);
+}
+
+.form-meta {
+    color: var(--j-text-subtlest);
+    font-size: 12px;
+}
+
+/* ================= toast (Jira flag) ================= */
+
+.toast {
+    padding: 16px;
+    border-radius: 3px;
+    background: var(--j-bg);
+    color: var(--j-text);
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: var(--j-shadow-overlay);
+}
+
+.toast::before {
+    color: var(--j-green);
+    font-size: 16px;
+}
+
+/* ================= empty state ================= */
+
+.empty-icon {
+    border-radius: 6px;
+    background: var(--j-blue-subtle);
+    color: var(--j-blue);
+}
+
+.empty-state h2 {
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.empty-state p {
+    color: var(--j-text-subtle);
+    font-size: 14px;
+}
+
+/* ================= cookie banner ================= */
+
+.cookie-banner {
+    border: none;
+    border-radius: 3px;
+    box-shadow: var(--j-shadow-overlay);
+}
+
+.cookie-banner p {
+    color: var(--j-text);
+}
+
+/* ================= messages page ================= */
+
+.messages-view {
+    grid-template-columns: 320px 1fr;
+    height: calc(100vh - 56px);
+}
+
+.conversations-head h2 {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.conversations {
+    border-inline-end: 1px solid var(--j-border);
+    background: var(--j-bg-sunken);
+}
+
+.conversations-head {
+    border-bottom: 1px solid var(--j-border);
+}
+
+.conversations-head h2 {
+    color: var(--j-text-subtle);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+#new-conversation {
+    flex-shrink: 0;
+    max-width: none;
+    height: 32px;
+    padding: 0 8px;
+    border: none;
+    border-radius: var(--j-radius);
+    background: var(--j-bg-neutral);
+    color: var(--j-text-subtle);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+#new-conversation:hover {
+    background: var(--j-bg-neutral-hover);
+}
+
+#new-conversation:focus-visible {
+    outline: 2px solid var(--j-blue);
+    outline-offset: 1px;
+}
+
+.conversation {
+    border-radius: var(--j-radius);
+}
+
+.conversation:hover {
+    background: var(--j-bg-neutral);
+}
+
+.conversation.is-active {
+    background: var(--j-blue-subtle);
+    box-shadow: inset 2px 0 0 var(--j-blue);
+}
+
+.conversation-name {
+    color: var(--j-text);
+    font-weight: 500;
+}
+
+.conversation-preview,
+.conversation-time {
+    color: var(--j-text-subtlest);
+}
+
+.thread {
+    background: var(--j-bg);
+}
+
+.thread-head {
+    border-bottom: 1px solid var(--j-border);
+}
+
+.thread-head h2 {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* messages look like Jira comments: avatar-less, flat, with a light card behind other people's */
+.bubble {
+    border: none;
+    border-radius: 6px;
+    background: var(--j-bg-sunken);
+    color: var(--j-text);
+    box-shadow: var(--j-shadow-card);
+}
+
+.message.is-mine .bubble {
+    border-radius: 6px;
+    background: var(--j-blue);
+}
+
+.day-divider span {
+    border-radius: var(--j-radius);
+    background: var(--j-bg-neutral);
+    color: var(--j-text-subtle);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.compose {
+    border-top: 1px solid var(--j-border);
+}
+
+#compose-text {
+    min-height: 40px;
+    border: 1px solid var(--j-border-input);
+    border-radius: var(--j-radius);
+    font-size: 14px;
+}
+
+#compose-text:focus {
+    border-color: var(--j-blue);
+    box-shadow: inset 0 0 0 1px var(--j-blue);
+}
+
+#compose-send {
+    height: 40px;
+}
+
+/* ================= login / signup ================= */
+
+.auth-page {
+    background: var(--j-bg-sunken);
+}
+
+.auth-card {
+    max-width: 400px;
+    padding: 32px 40px;
+    border: none;
+    border-radius: 3px;
+    background: var(--j-bg);
+    box-shadow: 0 0 10px #091e4226;
+}
+
+/* logo above the form */
+.auth-card::before {
+    content: "\2713  Tasks";
+    display: block;
+    margin-bottom: 24px;
+    color: var(--j-blue);
+    font-size: 22px;
+    font-weight: 700;
+    text-align: center;
+    white-space: pre;
+}
+
+.auth-card h1 {
+    margin-bottom: 24px;
+    color: var(--j-text);
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.auth-card .btn-primary {
+    height: 40px;
+}
+
+.auth-error {
+    color: var(--j-red);
+    font-size: 14px;
+}
+
+.auth-switch {
+    color: var(--j-text-subtle);
+}
+
+.auth-switch a {
+    color: var(--j-blue-text);
+    font-weight: 400;
+}
+
+/* ================= responsive ================= */
+
+@media (max-width: 860px) {
+    .board-view,
+    .list-view {
+        padding: 16px;
+    }
+
+    /* stacked columns on phones: let the page scroll instead of each column */
+    .board-view {
+        height: auto;
+    }
+
+    #task-board {
+        grid-template-columns: 1fr;
+    }
+
+    .column {
+        height: auto;
+        min-height: 0;
+    }
+
+    .column-content {
+        overflow-y: visible;
+    }
+
+    .add-task {
+        opacity: 1;
+    }
+
+    .topbar {
+        position: static;
+        height: auto;
+        padding: 8px 16px;
+    }
+
+    .view-tab {
+        height: 40px;
+    }
+}
+
+@media (max-width: 700px) {
+    .messages-view {
+        grid-template-columns: 1fr;
+        height: calc(100vh - 120px);
+    }
+}
+
+
+/* ================= surfaces that the older stylesheets paint white =================
+   (needed for dark mode; in light mode these resolve to the same colors as before) */
+
+.dialog,
+.row-menu,
+.toast,
+.cookie-banner,
+.auth-card,
+.task-card,
+.column[data-status="done"] .task-card {
+    background: var(--j-bg-raised);
+}
+
+.task-card:hover {
+    background: var(--j-bg-raised-hover);
+}
+
+.thread-head,
+.compose,
+.role-select,
+.menu-date input,
+#compose-text,
+#search {
+    background-color: var(--j-bg);
+    color: var(--j-text);
+}
+
+.role-select {
+    border-color: var(--j-border-input);
+}
+
+.message.is-mine .bubble {
+    color: var(--j-on-bold);
+}
+
+.message-time,
+.thread-start,
+.conversation-empty,
+.cell-empty {
+    color: var(--j-text-subtlest);
+}
+
+.thread-empty h2,
+.dialog-head h2,
+.empty-state h2,
+#task-list tbody td,
+#user-list tbody td {
+    color: var(--j-text);
+}
+
+.dialog-close,
+.list-toolbar .btn {
+    color: var(--j-text-subtle);
+}
+
+.list-toolbar .btn strong {
+    color: var(--j-text);
+}
+
+/* ================= theme toggle button (theme.js) ================= */
+
+#theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin-inline-start: 8px;
+    padding: 0;
+    border: none;
+    border-radius: var(--j-radius);
+    background: var(--j-bg-neutral);
+    color: var(--j-text-subtle);
+    cursor: pointer;
+}
+
+#theme-toggle:hover {
+    background: var(--j-bg-neutral-hover);
+    color: var(--j-text);
+}
+
+#theme-toggle svg {
+    width: 16px;
+    height: 16px;
+}
+
+.auth-card #theme-toggle {
+    display: flex;
+    margin: 12px auto 0;
+}
+
+.column[data-status="done"] .task-card:hover {
+    background: var(--j-bg-raised-hover);
+}
+
+#new-task-btn,
+#new-task-btn:hover {
+    color: var(--j-on-bold);
+}

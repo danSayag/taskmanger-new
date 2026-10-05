@@ -3,10 +3,13 @@
     <script src="./javascript/guard.js"></script>
     <meta charset="utf-8">
     <script src="./javascript/i18n.js"></script>
+    <script src="./javascript/theme.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title data-i18n="title.list">Tasks &middot; List</title>
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/screens.css">
+    <link rel="stylesheet" href="./css/jira.css">
+    <link rel="stylesheet" href="./css/sidebar.css">
 </head>
 
 <body>
@@ -64,7 +67,12 @@
                         <th data-i18n="col.title">Title</th>
                         <th data-i18n="col.status">Status</th>
                         <th data-i18n="col.priority">Priority</th>
-                        <th data-i18n="col.due">Due</th>
+                        <th id="due-header" aria-sort="ascending">
+                            <button type="button" class="th-sort" id="sort-due">
+                                <span data-i18n="col.due">Due</span>
+                                <span class="sort-arrow" aria-hidden="true"></span>
+                            </button>
+                        </th>
                         <th class="col-actions"></th>
                     </tr>
                 </thead>
@@ -214,6 +222,7 @@
 <!-- ============ Success toast (shown after Delete) ============ -->
 <div class="toast toast-target" id="deleted" data-i18n="toast.taskDeleted">Task deleted</div>
 <script src="./javascript/common.js"></script>
+<script src="./javascript/sidebar.js"></script>
 <script src="./javascript/list.js"></script>
 
 </body>
