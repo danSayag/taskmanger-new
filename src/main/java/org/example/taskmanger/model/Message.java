@@ -21,16 +21,16 @@ public class Message {
     private Long senderId;
 
     @Column(nullable = false)
-    private Long getterId;
+    private Long receiverId;
 
     @Column(nullable = false)
     private String content;
 
     public Message(){}
     
-    public Message(Long senderId, Long getterId, String content){
+    public Message(Long senderId, Long receiverId, String content){
         this.senderId = senderId;
-        this.getterId = getterId;
+        this.receiverId = receiverId;
         this.content = content;
     }
 }

@@ -1,0 +1,466 @@
+/* Timeline page (timeline.html): a scheduler grid with a side panel, like a team calendar.
+   Colors come from the --j-* tokens in jira.css, so dark mode follows along.
+   Positions use logical properties (inline-start/end), so the layout mirrors itself in Hebrew. */
+
+:root {
+    --tl-today-bg: #fff7d6;
+    --tl-today-text: #7f5f01;
+    --tl-weekend-bg: #f7f8f9;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --tl-today-bg: #f5cd4714;
+        --tl-today-text: #f5cd47;
+        --tl-weekend-bg: #1a1e22;
+    }
+}
+
+:root[data-theme="dark"] {
+    --tl-today-bg: #f5cd4714;
+    --tl-today-text: #f5cd47;
+    --tl-weekend-bg: #1a1e22;
+}
+
+.timeline-view::before {
+    content: "Projects  /  Tasks  /  Timeline";
+}
+
+.tl-layout {
+    display: grid;
+    grid-template-columns: 224px minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+}
+
+/* ---------- side panel ---------- */
+
+.tl-side {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.tl-mini-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    color: var(--j-text);
+    font-size: 14px;
+}
+
+.tl-mini-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    text-align: center;
+}
+
+.tl-mini-grid > span {
+    padding: 2px 0;
+    color: var(--j-text-subtlest);
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.tl-mini-day {
+    position: relative;
+    height: 28px;
+    border: none;
+    border-radius: var(--j-radius);
+    background: transparent;
+    color: var(--j-text);
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.tl-mini-day:hover {
+    background: var(--j-bg-neutral-hover);
+}
+
+.tl-mini-day.is-other {
+    color: var(--j-text-subtlest);
+}
+
+.tl-mini-day.is-selected {
+    background: var(--j-blue-subtle);
+    color: var(--j-blue-text);
+}
+
+.tl-mini-day.is-today {
+    box-shadow: inset 0 0 0 2px var(--j-blue);
+    font-weight: 700;
+}
+
+/* a dot under days that have tasks due */
+.tl-mini-day.has-tasks::after {
+    position: absolute;
+    bottom: 3px;
+    left: 50%;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: currentColor;
+    content: "";
+    transform: translateX(-50%);
+}
+
+.tl-side-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.tl-side-label {
+    color: var(--j-text-subtle);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.tl-select {
+    height: 32px;
+    padding: 0 8px;
+    border: 1px solid var(--j-border-input);
+    border-radius: var(--j-radius);
+    background: var(--j-bg);
+    color: var(--j-text);
+    font: inherit;
+    font-size: 14px;
+}
+
+.tl-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* each group as a colored chip with a checkbox, like the calendars list in a scheduler */
+.tl-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    border-radius: var(--j-radius);
+    background: var(--block);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.tl-legend-item:has(input:not(:checked)) {
+    background: transparent;
+    box-shadow: inset 0 0 0 1px var(--j-border);
+    color: var(--j-text-subtle);
+}
+
+.tl-legend-item input {
+    margin: 0;
+    accent-color: #fff;
+}
+
+.tl-legend-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tl-legend-count {
+    font-weight: 500;
+    opacity: .85;
+}
+
+/* ---------- toolbar ---------- */
+
+.tl-main {
+    min-width: 0;
+}
+
+.tl-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    margin-bottom: 12px;
+}
+
+.tl-nav {
+    display: inline-flex;
+    gap: 4px;
+}
+
+.tl-toolbar h2 {
+    margin: 0;
+    color: var(--j-text);
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.tl-range-pill {
+    margin-inline-start: auto;
+}
+
+.tl-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: var(--j-radius);
+    background: var(--j-bg-neutral);
+    color: var(--j-text);
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.tl-icon-btn:hover {
+    background: var(--j-bg-neutral-hover);
+}
+
+.tl-mini-head .tl-icon-btn {
+    width: 28px;
+    height: 28px;
+    background: transparent;
+}
+
+/* ‹ › point the other way in right-to-left languages */
+[dir="rtl"] .tl-arrow {
+    transform: scaleX(-1);
+}
+
+/* ---------- the calendar: one line per week ---------- */
+
+.tl-scroll {
+    overflow: hidden;
+    border: 1px solid var(--j-border);
+    border-radius: 6px;
+    background: var(--j-bg);
+}
+
+.tl-weekdays,
+.tl-week {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.tl-weekday {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--j-border);
+    color: var(--j-text-subtle);
+    font-size: 12px;
+    font-weight: 600;
+    text-align: end;
+    text-transform: uppercase;
+}
+
+.tl-weekday + .tl-weekday {
+    border-inline-start: 1px solid var(--j-border);
+}
+
+.tl-week + .tl-week {
+    border-top: 1px solid var(--j-border);
+}
+
+.tl-daycell {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 140px;
+    padding: 4px 6px 8px;
+    cursor: pointer;
+}
+
+.tl-scroll.is-month .tl-daycell {
+    min-height: 112px;
+}
+
+.tl-daycell + .tl-daycell {
+    border-inline-start: 1px solid var(--j-border);
+}
+
+.tl-daycell:hover {
+    background: var(--j-bg-neutral);
+}
+
+.tl-daycell.is-weekend {
+    background: var(--tl-weekend-bg);
+}
+
+.tl-daycell.is-weekend:hover {
+    background: var(--j-bg-neutral-hover);
+}
+
+.tl-daycell.is-today {
+    background: var(--tl-today-bg);
+}
+
+.tl-daycell.is-other-month .tl-daynum {
+    color: var(--j-text-subtlest);
+    font-weight: 400;
+}
+
+/* the date in the top corner (top right; top left in Hebrew), with a "+" that appears on hover */
+.tl-dayhead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    min-height: 28px;
+    margin-bottom: 2px;
+}
+
+.tl-daynum {
+    margin-inline-start: auto;
+    padding: 2px 6px;
+    border-radius: 12px;
+    color: var(--j-text);
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.tl-daycell.is-today .tl-daynum {
+    background: var(--j-blue);
+    color: var(--j-on-bold, #fff);
+}
+
+.tl-add {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: none;
+    border-radius: var(--j-radius);
+    background: transparent;
+    color: var(--j-text-subtle);
+    font: inherit;
+    font-size: 18px;
+    line-height: 1;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.tl-daycell:hover .tl-add,
+.tl-add:focus-visible {
+    opacity: 1;
+}
+
+.tl-add:hover {
+    background: var(--j-bg-neutral-hover);
+    color: var(--j-text);
+}
+
+/* on touch screens there is no hover, so keep the "+" visible */
+@media (hover: none) {
+    .tl-add {
+        opacity: .6;
+    }
+}
+
+.tl-blocks {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+/* ---------- task blocks ---------- */
+
+.tl-block {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    height: 24px;
+    padding: 0 8px;
+    border-radius: 4px;
+    background: var(--block);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.tl-block:hover,
+.tl-block:focus-visible {
+    filter: brightness(1.1);
+    box-shadow: 0 0 0 2px var(--j-bg), 0 0 0 4px var(--block);
+    outline: none;
+}
+
+.tl-block-title {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tl-block.is-done {
+    opacity: .55;
+}
+
+.tl-block.is-done .tl-block-title {
+    text-decoration: line-through;
+}
+
+/* overdue: a red edge and a "!" badge, so it doesn't rely on color alone */
+.tl-block.is-overdue {
+    box-shadow: inset 4px 0 0 var(--j-red);
+}
+
+[dir="rtl"] .tl-block.is-overdue {
+    box-shadow: inset -4px 0 0 var(--j-red);
+}
+
+.tl-flag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #fff;
+    color: #c9372c;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+/* ---------- small screens ---------- */
+
+@media (max-width: 1000px) {
+    .tl-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .tl-side {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+}
+
+/* phones: seven readable columns don't fit, so the calendar scrolls sideways */
+@media (max-width: 860px) {
+    .tl-range-pill {
+        margin-inline-start: 0;
+    }
+
+    .tl-scroll {
+        overflow-x: auto;
+    }
+
+    .tl-weekdays,
+    .tl-week {
+        min-width: 700px;
+    }
+}

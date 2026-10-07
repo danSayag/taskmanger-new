@@ -6,14 +6,14 @@ import org.example.taskmanger.model.Message;
 public record MessageResponse(
         Long messageId,
         Long senderId,
-        Long getterId,
+        Long receiverId,
         String content) {
 
     public static MessageResponse from(Message message) {
         return new MessageResponse(
                 message.getMessageId(),
                 message.getSenderId(),
-                message.getGetterId(),
+                message.getReceiverId(),
                 message.getContent());
     }
 }

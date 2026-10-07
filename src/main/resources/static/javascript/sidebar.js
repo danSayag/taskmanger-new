@@ -28,8 +28,8 @@ const SIDEBAR_SECTIONS = [
       {label: 'nav.board', href: './index.html', icon: 'board'},
       {label: 'nav.list', href: './list.html', icon: 'list'},
       {label: 'nav.backlog', href: './backlog.html', icon: 'backlog', soon: true},
-      {label: 'nav.timeline', href: './timeline.html', icon: 'timeline', soon: true},
-      {label: 'nav.reports', href: './reports.html', icon: 'reports', soon: true}
+      {label: 'nav.timeline', href: './timeline.html', icon: 'timeline'},
+      {label: 'nav.reports', href: './reports.html', icon: 'reports'}
     ]
   },
   {

@@ -3,13 +3,13 @@
 // Backend endpoints this page expects (all need the JWT, like the task endpoints).
 // Shapes match ConvoResponse / MessageResponse:
 //   ConvoResponse   = {convoId, messages: [MessageResponse]}
-//   MessageResponse = {messageId, senderId, getterId, content, sentAt?}   sentAt is optional (ISO string)
+//   MessageResponse = {messageId, senderId, receiverId, content, sentAt?}   sentAt is optional (ISO string)
 //
 //   GET  /users                                -> [{id, username}]   everyone you can message
 //   GET  /convo                                -> [ConvoResponse]    your conversations (admins: all of them)
-//   POST /convo                {getterId, content} -> ConvoResponse  starts a conversation with its first message
+//   POST /convo                {receiverId, content} -> ConvoResponse  starts a conversation with its first message
 //   POST /convo/{convoId}/messages {content}   -> MessageResponse    adds a message; the server works out
-//                                                                    the getter (the other person in the convo)
+//                                                                    the receiver (the other person in the convo)
 //
 // The sender is always the logged-in user; the server must take it from the token, never from the body.
 
@@ -89,7 +89,7 @@ function participants(convo) {
   const ids = new Set()
   for (const m of convo.messages || []) {
     ids.add(m.senderId)
-    ids.add(m.getterId)
+    ids.add(m.receiverId)
   }
   return [...ids]
 }
@@ -296,7 +296,7 @@ async function sendMessage(event) {
       // first message: creates the conversation
       const created = await request(CONVO_URL, {
         method: 'POST',
-        body: JSON.stringify({getterId: target.otherId, content})
+        body: JSON.stringify({receiverId: target.otherId, content})
       })
       if (created?.convoId != null && active === target) {
         active.convoId = created.convoId

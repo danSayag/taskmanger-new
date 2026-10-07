@@ -6,6 +6,6 @@ import jakarta.validation.constraints.Size;
 
 // Body of POST /convo: who to talk to and the first message
 public record CreateConvoDto(
-        @NotNull Long getterId,
+        @NotNull Long receiverId,
         @NotBlank @Size(max = 2000) String content) {
 }
