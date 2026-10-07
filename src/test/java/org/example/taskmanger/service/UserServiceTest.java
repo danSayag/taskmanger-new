@@ -2,10 +2,13 @@ package org.example.taskmanger.service;
 
 import org.example.taskmanger.dto.CreateUserDto;
 import org.example.taskmanger.dto.UserDto;
+import org.example.taskmanger.dto.UserSummaryDto;
 import org.example.taskmanger.exception.UserNotFoundException;
 import org.example.taskmanger.model.Role;
 import org.example.taskmanger.model.Task;
 import org.example.taskmanger.model.User;
+import org.example.taskmanger.model.Convo;
+import org.example.taskmanger.repository.ConvoRepository;
 import org.example.taskmanger.repository.TaskRepository;
 import org.example.taskmanger.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,6 +34,8 @@ class UserServiceTest {
     private UserRepository userRepository;
     @Mock
     private TaskRepository taskRepository;
+    @Mock
+    private ConvoRepository convoRepository;
     @Mock
     private CurrentUserService currentUser;
     @Mock
@@ -146,6 +151,30 @@ class UserServiceTest {
 
         verify(taskRepository).deleteAll(tasks);
         verify(userRepository).delete(alice);
+    }
+
+    @Test
+    void deletingUserAlsoDeletesTheirConversations() {
+        List<Convo> convos = List.of(new Convo(), new Convo());
+        when(userRepository.findById(2L)).thenReturn(Optional.of(alice));
+        when(convoRepository.findDistinctByMessagesSenderIdOrMessagesReceiverId(2L, 2L)).thenReturn(convos);
+
+        userService.deleteUser(2L);
+
+        // conversations go before the user, since their messages point at the user
+        var order = inOrder(convoRepository, userRepository);
+        order.verify(convoRepository).deleteAll(convos);
+        order.verify(userRepository).delete(alice);
+    }
+
+    @Test
+    void userSummariesHaveTheNameButNotTheEmail() {
+        when(userRepository.findAll()).thenReturn(List.of(admin, alice));
+
+        List<UserSummaryDto> users = userService.getUserSummaries();
+
+        // getUsername() is the email (Spring Security logs in by email); summaries must use the display name
+        assertEquals(List.of(new UserSummaryDto(1L, "admin"), new UserSummaryDto(2L, "alice")), users);
     }
 
     @Test

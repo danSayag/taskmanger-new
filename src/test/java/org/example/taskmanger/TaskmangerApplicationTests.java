@@ -1,13 +1,15 @@
 package org.example.taskmanger;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.platform.suite.api.IncludeEngines;
+import org.junit.platform.suite.api.SelectPackages;
+import org.junit.platform.suite.api.Suite;
+import org.junit.platform.suite.api.SuiteDisplayName;
 
-@SpringBootTest
+// Click Run on this class in the IDE to run every test in the project.
+// (`./mvnw test` runs them all too, without going through this suite.)
+@Suite
+@SuiteDisplayName("All tests")
+@SelectPackages("org.example.taskmanger")
+@IncludeEngines("junit-jupiter")
 class TaskmangerApplicationTests {
-
-    @Test
-    void contextLoads() {
-    }
-
 }
