@@ -3,6 +3,7 @@ package org.example.taskmanger.api;
 import com.jayway.jsonpath.JsonPath;
 import org.example.taskmanger.model.Role;
 import org.example.taskmanger.model.User;
+import org.example.taskmanger.repository.ConvoRepository;
 import org.example.taskmanger.repository.TaskRepository;
 import org.example.taskmanger.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +20,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 // Starts the whole app on an in-memory database and calls it over HTTP with real JWTs.
-// Every test starts with no users and no tasks.
+// Every test starts with no users, tasks or conversations.
 @SpringBootTest
 @AutoConfigureMockMvc
 abstract class ApiTestSupport {
@@ -33,10 +34,14 @@ abstract class ApiTestSupport {
     @Autowired
     TaskRepository taskRepository;
     @Autowired
+    ConvoRepository convoRepository;
+    @Autowired
     PasswordEncoder passwordEncoder;
 
     @BeforeEach
     void cleanDatabase() {
+        // messages point at users, so conversations have to go first
+        convoRepository.deleteAll();
         taskRepository.deleteAll();
         userRepository.deleteAll();
     }
@@ -102,6 +107,18 @@ abstract class ApiTestSupport {
 
     long createTask(String token, String title) throws Exception {
         return createTask(token, title, "MEDIUM", "2026-10-10");
+    }
+
+    // ---------- conversations ----------
+
+    // starts a conversation from the token's user and returns its id
+    long startConvo(String token, long receiverId, String content) throws Exception {
+        String body = mvc.perform(json(post("/convo").with(bearer(token)), """
+                        {"receiverId": %d, "content": "%s"}
+                        """.formatted(receiverId, content)))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
+        return ((Number) JsonPath.read(body, "$.convoId")).longValue();
     }
 
     static RequestPostProcessor bearer(String token) {

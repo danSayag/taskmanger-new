@@ -22,7 +22,7 @@ A multi-user task manager built with Spring Boot. It has JWT authentication, use
 
 ### Admin panel (`admin.html`, admins only)
 - See every user with their email, role and number of tasks.
-- Create users with a chosen role, change a user's role, and delete users. Deleting a user also deletes their tasks.
+- Create users with a chosen role, change a user's role, and delete users. Deleting a user also deletes their tasks and every conversation they're in (for the other person too).
 - Admins can't change their own role or delete their own account, so they can't lock themselves out.
 - When creating a task, admins get an **Assign to** field to create it for another user.
 
@@ -102,6 +102,12 @@ New sign-ups are always `USER`. To get an admin, either:
 
 After that, admins can create more admins from the admin panel.
 
+## Tests
+
+- **Backend (Java):** `./mvnw test` runs every test (unit tests, repository tests on an in-memory H2 database, and API tests that call the real endpoints with real JWTs). No PostgreSQL needed.
+  In the IDE, click **Run** on `TaskmangerApplicationTests`: it's a suite that runs all of them.
+- **Frontend (JavaScript):** `node --test "src/test/javascript/*.test.js"` tests the timeline and reports logic (which days are shown, where tasks land, week buckets, counts). Needs Node 18 or newer; nothing to install. These aren't part of `./mvnw test`.
+
 ## API
 
 All endpoints except `/auth/**` need an `Authorization: Bearer <token>` header.
@@ -152,7 +158,7 @@ Tasks are returned as `{ "taskId", "title", "description", "priority", "status",
 | `GET` | `/admin/users` | Admin | List all users |
 | `POST` | `/admin/users` | Admin | Create a user. Body: `{ "username", "email", "password", "role" }` |
 | `PUT` | `/admin/users/{userId}/role` | Admin | Change a role. Body: `{ "role": "USER" \| "ADMIN" }` |
-| `DELETE` | `/admin/users/{userId}` | Admin | Delete a user and their tasks |
+| `DELETE` | `/admin/users/{userId}` | Admin | Delete a user, their tasks and their conversations |
 
 ### Messages
 
@@ -223,4 +229,3 @@ src/main/resources/
 - **A "done" date on tasks**, so reports can show tasks finished per week.
 - **`MANAGER` role:** it exists in the `Role` enum but isn't used anywhere yet.
 - **Email verification:** the `verification_code` columns and the mail starter exist, but new accounts are enabled right away (see the TODO in `AuthenticationService`).
-- **Tests for messaging:** the test suite (`./mvnw test`) covers auth, tasks, users and the admin API, but not conversations yet.

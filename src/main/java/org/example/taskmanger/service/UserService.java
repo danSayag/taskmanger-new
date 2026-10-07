@@ -6,6 +6,7 @@ import org.example.taskmanger.dto.UserSummaryDto;
 import org.example.taskmanger.exception.UserNotFoundException;
 import org.example.taskmanger.model.Role;
 import org.example.taskmanger.model.User;
+import org.example.taskmanger.repository.ConvoRepository;
 import org.example.taskmanger.repository.TaskRepository;
 import org.example.taskmanger.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,13 +21,15 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final TaskRepository taskRepository;
+    private final ConvoRepository convoRepository;
     private final CurrentUserService currentUser;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, TaskRepository taskRepository,
+    public UserService(UserRepository userRepository, TaskRepository taskRepository, ConvoRepository convoRepository,
                        CurrentUserService currentUser, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.taskRepository = taskRepository;
+        this.convoRepository = convoRepository;
         this.currentUser = currentUser;
         this.passwordEncoder = passwordEncoder;
     }
@@ -74,7 +77,8 @@ public class UserService {
         return toDto(userRepository.save(user));
     }
 
-    // deletes the user together with all of their tasks
+    // deletes the user together with all of their tasks and every conversation they're in
+    // (both people's side of it: a conversation can't continue without one of them)
     @Transactional
     public void deleteUser(Long userId) {
         User user = userRepository.findById(userId)
@@ -83,6 +87,7 @@ public class UserService {
             throw new IllegalArgumentException("You can't delete your own account");
         }
         taskRepository.deleteAll(taskRepository.findByOwner(user));
+        convoRepository.deleteAll(convoRepository.findDistinctByMessagesSenderIdOrMessagesReceiverId(userId, userId));
         userRepository.delete(user);
     }
 
