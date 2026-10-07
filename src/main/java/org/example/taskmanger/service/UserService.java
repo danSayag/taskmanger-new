@@ -43,8 +43,9 @@ public class UserService {
 
     // every user, with only their id and username
     public List<UserSummaryDto> getUserSummaries() {
-        // TODO: load all users and map each one to a UserSummaryDto
-        throw new UnsupportedOperationException("TODO");
+        return StreamSupport.stream(userRepository.findAll().spliterator(), false)
+                .map(user -> new UserSummaryDto(user.getId(), user.getDisplayName()))
+                .toList();
     }
 
     public UserDto createUser(CreateUserDto input) {

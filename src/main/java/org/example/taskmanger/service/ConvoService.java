@@ -31,11 +31,12 @@ public class ConvoService {
         this.userRepository = userRepository;
     }
 
-    // admins see every conversation, everyone else only the ones they sent messages in
+    // admins see every conversation, everyone else only the ones they're part of
     public List<ConvoResponse> getAllConvos(){
+        Long currentUserId = currentUserService.get().getId();
         List<Convo> convos = currentUserService.isAdmin()
             ? convoRepository.findAll()
-            : convoRepository.findDistinctByMessagesSenderId(currentUserService.get().getId());
+            : convoRepository.findDistinctByMessagesSenderIdOrMessagesReceiverId(currentUserId, currentUserId);
         return toResponses(convos);
     }
 

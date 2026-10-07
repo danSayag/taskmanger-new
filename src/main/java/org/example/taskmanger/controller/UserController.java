@@ -28,8 +28,7 @@ public class UserController {
     // everyone you can message; used by the "+ New message" picker on messages.html
     @GetMapping("/users")
     public List<UserSummaryDto> getUsers() {
-        // TODO: return every user as a UserSummaryDto
-        throw new UnsupportedOperationException("TODO");
+        return userService.getUserSummaries();
     }
 
     // /admin/** is restricted to ROLE_ADMIN in SecurityConfiguration

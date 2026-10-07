@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,6 +24,7 @@ public class Convo{
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "convo_id")
+    @OrderBy("messageId ASC")
     private List<Message> messages;
 
     public Convo(){}

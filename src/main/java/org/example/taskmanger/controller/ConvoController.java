@@ -32,13 +32,13 @@ public class ConvoController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ConvoResponse createConvo(@Valid @RequestBody CreateConvoDto createConvoDto) {
-        return createConvo(createConvoDto);
+        return convoService.createConvo(createConvoDto);
     }
 
     // POST /convo/{convoId}/messages {content} -> adds a message to an existing conversation
     @PostMapping("/{convoId}/messages")
     @ResponseStatus(HttpStatus.CREATED)
     public MessageResponse sendMessage(@PathVariable Long convoId, @Valid @RequestBody SendMessageDto sendMessageDto) {
-        return sendMessage(convoId, sendMessageDto);
+        return convoService.sendMessage(convoId, sendMessageDto);
     }
 }

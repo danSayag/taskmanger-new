@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ConvoRepository extends JpaRepository<Convo,Long> {
 
-    // conversations with at least one message sent by this user
-    List<Convo> findDistinctByMessagesSenderId(Long senderId);
+    // conversations with at least one message sent or received by this user
+    List<Convo> findDistinctByMessagesSenderIdOrMessagesReceiverId(Long senderId, Long receiverId);
 }
