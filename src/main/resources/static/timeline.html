@@ -5,47 +5,212 @@
     <script src="./javascript/i18n.js"></script>
     <script src="./javascript/theme.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Tasks &middot; Timeline</title>
+    <title data-i18n="title.timeline">Tasks &middot; Timeline</title>
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/screens.css">
     <link rel="stylesheet" href="./css/jira.css">
     <link rel="stylesheet" href="./css/sidebar.css">
+    <link rel="stylesheet" href="./css/timeline.css">
 </head>
 
 <body>
-
-<!--
-  TODO: Timeline page (placeholder - linked from the sidebar)
-  Show tasks as bars on a calendar, placed by their due date (one row per task).
-  Backend: GET /task already returns dueDate; add a startDate column (V6 migration) if you
-    want real bars instead of single-day markers.
-  Frontend: build a CSS grid with one column per day, scrollable horizontally.
-  When it's done, remove `soon: true` from this page's entry in javascript/sidebar.js.
--->
 
 <div class="container">
     <div class="board">
         <div class="topbar">
             <label id="task-label" data-i18n="nav.brand">Tasks</label>
-            <span class="spacer" style="margin-inline-start: auto"></span>
+            <a href="./index.html" class="view-tab" data-i18n="nav.board">Board</a>
+            <a href="./list.html" class="view-tab" data-i18n="nav.list">List</a>
+            <a href="./messages.html" class="view-tab" data-i18n="nav.messages">Messages</a>
+            <input type="search" id="search" placeholder="Search tasks..." data-i18n-placeholder="search.tasks">
+            <a href="#new-task" id="new-task-btn" class="btn btn-primary" data-i18n="btn.newTask">+ New task</a>
             <button type="button" class="btn" id="logout-btn" onclick="logout()" data-i18n="nav.logout">Log out</button>
         </div>
 
-        <div class="placeholder-view">
-            <h1 data-i18n="nav.timeline">Timeline</h1>
-            <div class="placeholder-card">
-                <span id="placeholder-icon"></span>
-                <h2 data-i18n="soon.title">Coming soon</h2>
-                <p data-i18n="soon.timeline"></p>
+        <div class="list-view timeline-view">
+            <div class="tl-layout">
+
+                <aside class="tl-side">
+                    <div class="tl-mini" id="tl-mini"></div>
+
+                    <div class="tl-side-section">
+                        <label class="tl-side-label" for="tl-group" data-i18n="timeline.groupBy">Color by</label>
+                        <select id="tl-group" class="tl-select">
+                            <option value="person" data-i18n="timeline.person">Person</option>
+                            <option value="status" data-i18n="filter.status">Status</option>
+                            <option value="priority" data-i18n="filter.priority">Priority</option>
+                        </select>
+                        <ul class="tl-legend" id="tl-legend"></ul>
+                    </div>
+
+                    <div class="tl-side-section">
+                        <label class="tl-side-label" for="tl-status" data-i18n="filter.status">Status</label>
+                        <select id="tl-status" class="tl-select">
+                            <option value="all" data-i18n="filter.all">All</option>
+                            <option value="todo" data-i18n="status.todo">To do</option>
+                            <option value="inprogress" data-i18n="status.inprogress">In progress</option>
+                            <option value="done" data-i18n="status.done">Done</option>
+                        </select>
+                    </div>
+                </aside>
+
+                <section class="tl-main">
+                    <div class="tl-toolbar">
+                        <div class="tl-nav">
+                            <button type="button" class="tl-icon-btn tl-arrow" id="tl-prev" data-i18n-title="timeline.prev">&#8249;</button>
+                            <button type="button" class="btn" id="tl-today" data-i18n="due.today">Today</button>
+                            <button type="button" class="tl-icon-btn tl-arrow" id="tl-next" data-i18n-title="timeline.next">&#8250;</button>
+                        </div>
+                        <h2 id="tl-range-label"></h2>
+                        <span id="result-count"></span>
+                        <div class="filter-pill tl-range-pill">
+                            <span data-i18n="timeline.range">Range</span>
+                            <select id="tl-range">
+                                <option value="week" data-i18n="timeline.week">Week</option>
+                                <option value="2weeks" data-i18n="timeline.twoWeeks">2 weeks</option>
+                                <option value="month" data-i18n="timeline.month">Month</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="tl-scroll" id="timeline"></div>
+                </section>
+
             </div>
         </div>
     </div>
 </div>
 
+<!-- ============ New task modal ============ -->
+<div class="modal" id="new-task">
+    <a class="modal-backdrop" href="#"></a>
+    <div class="dialog">
+        <div class="dialog-head">
+            <h2 data-i18n="modal.newTask">New task</h2>
+            <a class="dialog-close" href="#">&#10005;</a>
+        </div>
+
+        <div class="field">
+            <label for="new-title"><span data-i18n="field.title">Title</span> <span class="req">*</span></label>
+            <input type="text" id="new-title">
+        </div>
+
+        <div class="field">
+            <label for="new-desc" data-i18n="field.description">Description</label>
+            <textarea id="new-desc" placeholder="Optional details&hellip;" data-i18n-placeholder="field.descPlaceholder"></textarea>
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <label for="new-status" data-i18n="field.status">Status</label>
+                <select id="new-status">
+                    <option value="TODO" data-i18n="status.TODO">TODO</option>
+                    <option value="IN_PROGRESS" data-i18n="status.IN_PROGRESS">IN PROGRESS</option>
+                    <option value="DONE" data-i18n="status.DONE">DONE</option>
+                </select>
+            </div>
+            <div class="field">
+                <label for="new-priority" data-i18n="field.priority">Priority</label>
+                <select id="new-priority">
+                    <option value="LOW" data-i18n="priority.LOW">LOW</option>
+                    <option value="MEDIUM" selected data-i18n="priority.MEDIUM">MEDIUM</option>
+                    <option value="HIGH" data-i18n="priority.HIGH">HIGH</option>
+                </select>
+            </div>
+            <div class="field">
+                <label for="new-due" data-i18n="field.dueDate">Due date</label>
+                <input type="date" id="new-due">
+            </div>
+        </div>
+
+        <div class="dialog-foot">
+            <a href="#" class="btn spacer" data-i18n="btn.cancel">Cancel</a>
+            <button type="button" class="btn btn-primary" onclick="submitNewTask()" data-i18n="btn.createTask">Create task</button>
+        </div>
+    </div>
+</div>
+
+<!-- ============ Edit task modal ============ -->
+<div class="modal" id="edit-task">
+    <a class="modal-backdrop" href="#"></a>
+    <div class="dialog">
+        <div class="dialog-head">
+            <h2 data-i18n="modal.editTask">Edit task</h2>
+            <a class="dialog-close" href="#">&#10005;</a>
+        </div>
+
+        <div class="field">
+            <label for="edit-title"><span data-i18n="field.title">Title</span> <span class="req">*</span></label>
+            <input type="text" id="edit-title">
+        </div>
+
+        <div class="field">
+            <label for="edit-desc" data-i18n="field.description">Description</label>
+            <textarea id="edit-desc"></textarea>
+        </div>
+
+        <div class="field">
+            <label data-i18n="field.status">Status</label>
+            <div class="segmented">
+                <input type="radio" name="edit-status" id="st-todo">
+                <label for="st-todo" data-i18n="status.todo">To do</label>
+                <input type="radio" name="edit-status" id="st-prog" checked>
+                <label for="st-prog" data-i18n="status.inprogress">In progress</label>
+                <input type="radio" name="edit-status" id="st-done">
+                <label for="st-done" data-i18n="status.done">Done</label>
+            </div>
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <label data-i18n="field.priority">Priority</label>
+                <div class="segmented">
+                    <input type="radio" name="edit-priority" id="pr-low">
+                    <label for="pr-low" data-i18n="priority.low">Low</label>
+                    <input type="radio" name="edit-priority" id="pr-med" checked>
+                    <label for="pr-med" data-i18n="priority.med">Med</label>
+                    <input type="radio" name="edit-priority" id="pr-high">
+                    <label for="pr-high" data-i18n="priority.high">High</label>
+                </div>
+            </div>
+            <div class="field">
+                <label for="edit-due" data-i18n="field.dueDate">Due date</label>
+                <input type="date" id="edit-due">
+            </div>
+        </div>
+
+        <p class="form-meta"></p>
+
+        <div class="dialog-foot">
+            <a href="#delete-task" class="btn btn-link-danger" data-i18n="btn.delete">Delete</a>
+            <a href="#" class="btn spacer" data-i18n="btn.cancel">Cancel</a>
+            <button type="button" class="btn btn-primary" onclick="submitEditTask()" data-i18n="btn.save">Save</button>
+        </div>
+    </div>
+</div>
+
+<!-- ============ Delete confirmation ============ -->
+<div class="modal" id="delete-task">
+    <a class="modal-backdrop" href="#"></a>
+    <div class="dialog dialog-confirm">
+        <div class="dialog-head">
+            <h2 data-i18n="modal.deleteTask">Delete task?</h2>
+        </div>
+        <p id="delete-message" data-i18n="modal.deleteMessage">This task will be permanently deleted. This can&rsquo;t be undone.</p>
+        <div class="dialog-foot">
+            <a href="#" class="btn spacer" data-i18n="btn.cancel">Cancel</a>
+            <a href="#deleted" class="btn btn-danger" onclick="confirmDelete()" data-i18n="btn.delete">Delete</a>
+        </div>
+    </div>
+</div>
+
+
+<!-- ============ Success toast (shown after Delete) ============ -->
+<div class="toast toast-target" id="deleted" data-i18n="toast.taskDeleted">Task deleted</div>
+
 <script src="./javascript/common.js"></script>
 <script src="./javascript/sidebar.js"></script>
-<script>
-    document.getElementById('placeholder-icon').innerHTML = sidebarIcon('timeline')
-</script>
+<script src="./javascript/timeline.js"></script>
+
 </body>
 </html>

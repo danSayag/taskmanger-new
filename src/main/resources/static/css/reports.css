@@ -1,0 +1,392 @@
+/* Reports page (reports.html). Chart colors are checked for color-blind safety against both surfaces;
+   dark mode uses its own steps instead of the light ones. Text always uses the --j-text tokens, never a chart color. */
+
+:root {
+    --r-todo: #8590a2;
+    --r-inprogress: #0c66e4;
+    --r-done: #22a06b;
+    --r-bar: #0c66e4;
+    --r-overdue: #c9372c;
+    --r-track: var(--j-bg-neutral);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --r-todo: #738496;
+        --r-inprogress: #388bff;
+        --r-done: #1f845a;
+        --r-bar: #388bff;
+        --r-overdue: #e2483d;
+    }
+}
+
+:root[data-theme="dark"] {
+    --r-todo: #738496;
+    --r-inprogress: #388bff;
+    --r-done: #1f845a;
+    --r-bar: #388bff;
+    --r-overdue: #e2483d;
+}
+
+.reports-view::before {
+    content: "Projects  /  Tasks  /  Reports";
+}
+
+.reports-view h1 {
+    margin: 0 0 20px;
+    color: var(--j-text);
+    font-size: 24px;
+    font-weight: 500;
+}
+
+/* ---------- summary tiles ---------- */
+
+.r-tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.r-tile {
+    padding: 14px 16px;
+    border: 1px solid var(--j-border);
+    border-radius: 6px;
+    background: var(--j-bg);
+}
+
+.r-tile-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--j-text-subtle);
+    font-size: 13px;
+}
+
+.r-tile-value {
+    margin-top: 4px;
+    color: var(--j-text);
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.r-tile-note {
+    margin-top: 2px;
+    color: var(--j-text-subtlest);
+    font-size: 12px;
+}
+
+.r-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+/* ---------- cards ---------- */
+
+.r-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.r-card {
+    min-width: 0;
+    padding: 16px 20px 12px;
+    border: 1px solid var(--j-border);
+    border-radius: 6px;
+    background: var(--j-bg);
+}
+
+.r-card[hidden] {
+    display: none;
+}
+
+.r-wide {
+    grid-column: 1 / -1;
+}
+
+.r-card h2 {
+    margin: 0 0 4px;
+    color: var(--j-text);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.r-hint {
+    margin: 0 0 12px;
+    color: var(--j-text-subtlest);
+    font-size: 13px;
+}
+
+.r-empty {
+    margin: 16px 0;
+    color: var(--j-text-subtle);
+}
+
+.r-muted {
+    color: var(--j-text-subtlest);
+}
+
+/* series colors, used by marks and swatches only */
+.r-todo { background: var(--r-todo); }
+.r-inprogress { background: var(--r-inprogress); }
+.r-done { background: var(--r-done); }
+.r-overdue { background: var(--r-overdue); }
+
+/* ---------- status: one stacked bar ---------- */
+
+.r-stack {
+    display: flex;
+    gap: 2px;
+    height: 24px;
+    margin: 12px 0;
+}
+
+.r-seg {
+    min-width: 4px;
+    outline: none;
+}
+
+.r-seg:first-child {
+    border-start-start-radius: 4px;
+    border-end-start-radius: 4px;
+}
+
+.r-seg:last-child {
+    border-start-end-radius: 4px;
+    border-end-end-radius: 4px;
+}
+
+.r-seg:hover,
+.r-seg:focus-visible {
+    filter: brightness(1.12);
+}
+
+.r-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 20px;
+    margin: 0 0 4px;
+    padding: 0;
+    color: var(--j-text);
+    font-size: 13px;
+    list-style: none;
+}
+
+.r-legend li {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.r-swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+}
+
+/* ---------- due weeks: columns ---------- */
+
+.r-columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(48px, 1fr));
+    gap: 2px;
+}
+
+.r-col {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    outline: none;
+}
+
+.r-col-plot {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    height: 180px;
+    padding-top: 18px;
+    border-bottom: 1px solid var(--j-border);
+}
+
+.r-col-value {
+    margin-bottom: 4px;
+    color: var(--j-text);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.r-col-bar {
+    width: min(24px, 70%);
+    min-height: 0;
+    border-radius: 4px 4px 0 0;
+    background: var(--r-bar);
+}
+
+.r-col.is-overdue .r-col-bar {
+    background: var(--r-overdue);
+}
+
+.r-col:hover .r-col-bar,
+.r-col:focus-visible .r-col-bar {
+    filter: brightness(1.12);
+}
+
+.r-col:hover,
+.r-col:focus-visible {
+    background: var(--j-bg-neutral);
+    border-radius: 4px 4px 0 0;
+}
+
+.r-col-label {
+    padding: 6px 2px 0;
+    overflow: hidden;
+    color: var(--j-text-subtle);
+    font-size: 11px;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.r-col.is-overdue .r-col-label {
+    color: var(--j-red-text);
+    font-weight: 600;
+}
+
+/* ---------- horizontal bars ---------- */
+
+.r-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 12px 0 4px;
+}
+
+.r-bar-row {
+    display: grid;
+    grid-template-columns: minmax(90px, 30%) minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+    padding: 4px;
+    border-radius: 4px;
+    outline: none;
+}
+
+.r-bar-row:hover,
+.r-bar-row:focus-visible {
+    background: var(--j-bg-neutral);
+}
+
+.r-bar-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    color: var(--j-text);
+    font-size: 13px;
+}
+
+.r-bar-name > span:last-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.r-bar-name .j-avatar {
+    flex-shrink: 0;
+}
+
+.r-bar-track {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.r-bar {
+    height: 20px;
+    min-width: 2px;
+    max-width: calc(100% - 40px);
+    border-start-end-radius: 4px;
+    border-end-end-radius: 4px;
+    background: var(--r-bar);
+}
+
+.r-bar-value {
+    color: var(--j-text);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* ---------- table view ---------- */
+
+.r-table {
+    margin-top: 8px;
+    font-size: 13px;
+}
+
+.r-table summary {
+    width: fit-content;
+    color: var(--j-blue-text);
+    cursor: pointer;
+}
+
+.r-table table {
+    width: 100%;
+    margin-top: 8px;
+    border-collapse: collapse;
+}
+
+.r-table th,
+.r-table td {
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--j-border);
+    color: var(--j-text);
+    text-align: start;
+}
+
+.r-table th {
+    color: var(--j-text-subtle);
+    font-weight: 600;
+}
+
+.r-table td:not(:first-child),
+.r-table th:not(:first-child) {
+    text-align: end;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ---------- tooltip ---------- */
+
+.r-tip {
+    position: fixed;
+    z-index: 100;
+    max-width: 260px;
+    padding: 6px 10px;
+    border-radius: var(--j-radius);
+    background: var(--j-text);
+    color: var(--j-bg);
+    font-size: 12px;
+    pointer-events: none;
+}
+
+.r-tip[hidden] {
+    display: none;
+}
+
+@media (max-width: 860px) {
+    .r-cards {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .r-columns {
+        grid-template-columns: repeat(10, minmax(28px, 1fr));
+        overflow-x: auto;
+    }
+
+    .r-col-label {
+        font-size: 10px;
+    }
+}

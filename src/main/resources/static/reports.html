@@ -5,47 +5,63 @@
     <script src="./javascript/i18n.js"></script>
     <script src="./javascript/theme.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Tasks &middot; Reports</title>
+    <title data-i18n="title.reports">Tasks &middot; Reports</title>
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/screens.css">
     <link rel="stylesheet" href="./css/jira.css">
     <link rel="stylesheet" href="./css/sidebar.css">
+    <link rel="stylesheet" href="./css/reports.css">
 </head>
 
 <body>
-
-<!--
-  TODO: Reports page (placeholder - linked from the sidebar)
-  Charts about the work: tasks completed per week, open vs. done, overdue tasks by priority.
-  Backend: add aggregate endpoints, e.g. GET /reports/summary returning counts grouped by
-    status and priority (JPQL "select t.status, count(t) ... group by t.status").
-  Frontend: draw the charts with plain SVG or a library such as Chart.js.
-  When it's done, remove `soon: true` from this page's entry in javascript/sidebar.js.
--->
 
 <div class="container">
     <div class="board">
         <div class="topbar">
             <label id="task-label" data-i18n="nav.brand">Tasks</label>
+            <a href="./index.html" class="view-tab" data-i18n="nav.board">Board</a>
+            <a href="./list.html" class="view-tab" data-i18n="nav.list">List</a>
+            <a href="./messages.html" class="view-tab" data-i18n="nav.messages">Messages</a>
             <span class="spacer" style="margin-inline-start: auto"></span>
             <button type="button" class="btn" id="logout-btn" onclick="logout()" data-i18n="nav.logout">Log out</button>
         </div>
 
-        <div class="placeholder-view">
+        <div class="list-view reports-view" id="reports">
             <h1 data-i18n="nav.reports">Reports</h1>
-            <div class="placeholder-card">
-                <span id="placeholder-icon"></span>
-                <h2 data-i18n="soon.title">Coming soon</h2>
-                <p data-i18n="soon.reports"></p>
+
+            <div class="r-tiles" id="r-tiles"></div>
+
+            <div class="r-cards">
+                <section class="r-card r-wide">
+                    <h2 data-i18n="reports.byStatus">Tasks by status</h2>
+                    <div id="r-status"></div>
+                </section>
+
+                <section class="r-card r-wide">
+                    <h2 data-i18n="reports.byWeek">Open tasks by due week</h2>
+                    <p class="r-hint" data-i18n="reports.byWeekHint"></p>
+                    <div id="r-weeks"></div>
+                </section>
+
+                <section class="r-card">
+                    <h2 data-i18n="reports.byPriority">Open tasks by priority</h2>
+                    <div id="r-priority"></div>
+                </section>
+
+                <section class="r-card" id="r-people-card" hidden>
+                    <h2 data-i18n="reports.byPerson">Open tasks by person</h2>
+                    <div id="r-people"></div>
+                </section>
             </div>
         </div>
     </div>
 </div>
 
+<div class="r-tip" id="r-tip" role="tooltip" hidden></div>
+
 <script src="./javascript/common.js"></script>
 <script src="./javascript/sidebar.js"></script>
-<script>
-    document.getElementById('placeholder-icon').innerHTML = sidebarIcon('reports')
-</script>
+<script src="./javascript/reports.js"></script>
+
 </body>
 </html>
