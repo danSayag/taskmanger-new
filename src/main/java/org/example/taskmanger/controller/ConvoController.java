@@ -25,23 +25,20 @@ public class ConvoController {
     // GET /convo -> your conversations (admins: all of them)
     @GetMapping
     public List<ConvoResponse> getAllConvos() {
-        // TODO: return the current user's conversations
-        throw new UnsupportedOperationException("TODO");
+        return convoService.getAllConvos();
     }
 
     // POST /convo {receiverId, content} -> starts a conversation with its first message
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ConvoResponse createConvo(@Valid @RequestBody CreateConvoDto createConvoDto) {
-        // TODO: create the conversation and return it
-        throw new UnsupportedOperationException("TODO");
+        return createConvo(createConvoDto);
     }
 
     // POST /convo/{convoId}/messages {content} -> adds a message to an existing conversation
     @PostMapping("/{convoId}/messages")
     @ResponseStatus(HttpStatus.CREATED)
     public MessageResponse sendMessage(@PathVariable Long convoId, @Valid @RequestBody SendMessageDto sendMessageDto) {
-        // TODO: add the message and return it
-        throw new UnsupportedOperationException("TODO");
+        return sendMessage(convoId, sendMessageDto);
     }
 }
