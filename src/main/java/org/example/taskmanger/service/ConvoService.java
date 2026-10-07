@@ -4,6 +4,7 @@ import org.example.taskmanger.dto.ConvoResponse;
 import org.example.taskmanger.dto.CreateConvoDto;
 import org.example.taskmanger.dto.MessageResponse;
 import org.example.taskmanger.dto.SendMessageDto;
+import org.example.taskmanger.exception.ConvoNotFoundException;
 import org.example.taskmanger.model.Convo;
 import org.example.taskmanger.model.Message;
 import org.example.taskmanger.repository.ConvoRepository;
@@ -38,13 +39,13 @@ public class ConvoService {
         return toResponses(convos);
     }
 
-    // starts a new conversation between the current user and input.receiverId(), with input.content() as the first message
     public ConvoResponse createConvo(CreateConvoDto input) {
         Long currentUserId = currentUserService.get().getId();
 
         if(currentUserId.equals(input.receiverId())){
             throw new IllegalArgumentException("You can't start a conversation with yourself");
         }
+
         if(!userRepository.existsById(input.receiverId())){
             throw new IllegalArgumentException("User with " + input.receiverId() + " does not exist");
         }
@@ -53,15 +54,30 @@ public class ConvoService {
         Convo newConvo = convoRepository.save(new Convo(new ArrayList<>(List.of(message))));
         return ConvoResponse.from(newConvo);
     }
+    
 
-    // adds a message from the current user to an existing conversation
     public MessageResponse sendMessage(Long convoId, SendMessageDto input) {
-        // TODO: find the convo, or throw a not-found exception
-        // TODO: check the current user is part of it
-        // TODO: work out the receiver (the other person in the convo)
-        // TODO: save the message and return it as a MessageResponse
-        throw new UnsupportedOperationException("TODO");
+    Long currentUserId = currentUserService.get().getId();
+    Convo convo = convoRepository.findById(convoId)
+            .orElseThrow(() -> new ConvoNotFoundException(convoId));
+
+    Message firstMessage = convo.getMessages().get(0);
+    boolean isParticipant = currentUserId.equals(firstMessage.getSenderId())
+            || currentUserId.equals(firstMessage.getReceiverId());
+    if (!isParticipant) {
+        throw new ConvoNotFoundException(convoId);
     }
+
+    Long receiverId = firstMessage.getSenderId().equals(currentUserId)
+            ? firstMessage.getReceiverId()
+            : firstMessage.getSenderId();
+
+    convo.getMessages().add(new Message(currentUserId, receiverId, input.content()));
+    Convo savedConvo = convoRepository.save(convo);
+
+    List<Message> messages = savedConvo.getMessages();
+    return MessageResponse.from(messages.get(messages.size() - 1));
+}
 
     private List<ConvoResponse> toResponses(List<Convo> convos) {
         return convos.stream().map(ConvoResponse::from).toList();
