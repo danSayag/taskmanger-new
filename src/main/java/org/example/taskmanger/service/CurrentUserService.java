@@ -16,4 +16,8 @@ public class CurrentUserService {
     public boolean isAdmin() {
         return get().getRole() == Role.ADMIN;
     }
+
+    public boolean isManager(){
+        return get().getRole() == Role.MANAGER;
+    }
 }
