@@ -29,7 +29,7 @@ public class ConvoController {
         throw new UnsupportedOperationException("TODO");
     }
 
-    // POST /convo {getterId, content} -> starts a conversation with its first message
+    // POST /convo {receiverId, content} -> starts a conversation with its first message
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ConvoResponse createConvo(@Valid @RequestBody CreateConvoDto createConvoDto) {
