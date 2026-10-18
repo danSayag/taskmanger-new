@@ -15,7 +15,9 @@ A multi-user task manager built with Spring Boot. It has JWT authentication, use
 - Each task has a title, description, priority (`HIGH` / `MEDIUM` / `LOW`), status (`TODO` / `IN_PROGRESS` / `DONE`) and due date.
 - **Tasks belong to users.** Regular users only see and change their own tasks. Asking for someone else's task returns `404`. Admins see everyone's tasks, with the owner's name on each one.
 - **Board view** (`index.html`): tasks in *To do*, *In progress* and *Done* columns. **Drag a card** to another column to change its status. Click the priority badge to cycle it LOW → MEDIUM → HIGH. Overdue tasks are highlighted.
+  On phones, each column is a full-width card: swipe between them or use the status tabs above. The empty space under a column's tasks is a **+ Add task** area that opens the New task form with that column's status already chosen.
 - **List view** (`list.html`): the same tasks in a table, with filters for status and priority, sorting, pages, and a checkbox to mark a task done.
+  On phones, each task is a two-line row, and its description is hidden until you tap the task.
 - **Filters:** the priority and due-date filters are applied by the backend.
 - **Search** is done by the backend over titles and descriptions, and tolerates small typos.
 - Titles must be unique per user, so two users can have tasks with the same name.
@@ -43,13 +45,16 @@ A multi-user task manager built with Spring Boot. It has JWT authentication, use
 ### Messages (`messages.html`)
 - Direct messages between users: a conversation list, a chat thread, and new messages checked every 5 seconds.
 - **+ New message** starts a conversation with anyone; both people see it in their list. Admins see every conversation.
+- Above the list, a summary shows how many people have messaged you, with the avatars of the last 3. Click an avatar to open that conversation. There are no read/unread states yet, so this counts everyone who has ever written to you.
 
 ### Look and feel
 - Jira-style layout with a collapsible project sidebar.
 - **Light and dark mode:** follows the system setting until you pick one with the button in the top bar; the choice is remembered.
+- **Phone layout** (860px wide or less): the sidebar slides in from the ☰ button, and the language menu, your username and **Log out** move to its bottom. The top bar, filters and status tabs use pill-shaped controls.
+- Buttons share one style (rounded corners, an outline and a light tint), set at the end of `css/jira.css`.
 
 ### Languages
-- The site is available in **English** (default), **French** and **Hebrew**. Pick one from the language menu in the top bar or on the login page.
+- The site is available in **English** (default), **French** and **Hebrew**. Pick one from the language menu in the top bar (at the bottom of the sidebar on phones) or on the login page.
 - The choice is saved in a `lang` cookie, so it is remembered across pages and logins. Hebrew switches the layout to right-to-left.
 - All text lives in `javascript/i18n.js`. A small notice tells visitors the site uses cookies; dismissing it sets a `cookie_notice` cookie.
 
@@ -184,6 +189,7 @@ Interactive API docs are at `http://localhost:8080/swagger-ui.html` while the ap
 | `V4` | `role` column on users, `user_id` owner on tasks, titles unique per user. Tasks that existed before this migration are given to the first account |
 | `V5` | `convo` and `message` tables |
 | `V6` | Renames `message.getter_id` to `receiver_id` |
+| `V7` | `dtype` column on users, which Hibernate needs now that `Employee` extends `User` (existing users become `User`) |
 
 ## Project structure
 
@@ -193,7 +199,7 @@ src/main/java/org/example/taskmanger/
 ├── controller/   REST controllers (auth, tasks, users, conversations)
 ├── dto/          Request/response records (entities are never exposed by the API)
 ├── exception/    Custom exceptions and the global error handler
-├── model/        JPA entities and enums (User, Task, Convo, Message, Role, Priority, Status)
+├── model/        JPA entities and enums (User, Employee, Task, Convo, Message, Role, Priority, Status)
 ├── repository/   Spring Data repositories
 └── service/      Business logic (auth, JWT, tasks, users, conversations, current user)
 src/main/resources/
@@ -228,4 +234,5 @@ src/main/resources/
 - **Start dates on tasks**, so the timeline can show tasks that span several days.
 - **A "done" date on tasks**, so reports can show tasks finished per week.
 - **`MANAGER` role:** it exists in the `Role` enum but isn't used anywhere yet.
+- **Employees:** the `Employee` entity (a subclass of `User`, stored in the `users` table) exists, but `EmployeeController` has no endpoints yet and the `Employee(User, Long)` constructor isn't implemented (see the TODOs).
 - **Email verification:** the `verification_code` columns and the mail starter exist, but new accounts are enabled right away (see the TODO in `AuthenticationService`).
