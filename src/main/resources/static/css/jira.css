@@ -377,6 +377,12 @@ body {
     font-size: 14px;
 }
 
+/* list.html: "Showing 1–10 of 24" sits at the start of the footer under the table */
+.list-footer #result-count {
+    margin-inline: 0 16px;
+    font-size: 12px;
+}
+
 /* ================= board: columns ================= */
 
 /* the board fills the window under the top bar; each column has a fixed height and its cards scroll inside it */
@@ -384,6 +390,11 @@ body {
     display: flex;
     flex-direction: column;
     height: calc(100vh - 56px);
+}
+
+/* tabs for the board's columns; only shown on small screens */
+.status-tabs {
+    display: none;
 }
 
 #task-board {
@@ -706,6 +717,33 @@ body {
     margin-inline-start: 24px;
     color: var(--j-text-subtlest);
     font-size: 12px;
+}
+
+/* chevron that opens a row's description; only shown on small screens */
+.row-expand {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    margin-inline-start: auto;
+    padding: 0;
+    border: none;
+    border-radius: var(--j-radius);
+    background: none;
+    color: var(--j-text-subtle);
+    font-size: 12px;
+    cursor: pointer;
+    transition: transform .15s;
+}
+
+.row-expand:hover {
+    background: var(--j-bg-neutral-hover);
+}
+
+tr.is-expanded .row-expand {
+    transform: rotate(180deg);
 }
 
 tr.is-done .row-title {
@@ -1414,36 +1452,432 @@ th[aria-sort="none"] .sort-arrow {
         padding: 16px;
     }
 
-    /* stacked columns on phones: let the page scroll instead of each column */
+    /* phones: each status is a card; swipe sideways between them or use the tabs above.
+       The page scrolls vertically instead of each column. */
     .board-view {
         height: auto;
     }
 
+    /* the top bar already says "Tasks" */
+    .board-view::before,
+    .list-view::before {
+        display: none;
+    }
+
+    /* filters: pill-shaped like the top bar; on the board they share one row with the task count */
+    .top-main-view {
+        flex-wrap: nowrap;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    .top-main-view .filters {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .top-main-view .filter-pill {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .filter-pill {
+        gap: 6px;
+        height: 40px;
+        padding: 0 14px;
+        border: 1px solid var(--j-border);
+        border-radius: 999px;
+        background: var(--j-bg-neutral);
+        color: var(--j-text-subtlest);
+        font-size: 13px;
+    }
+
+    .filter-pill select {
+        flex: 1;
+        min-width: 0;
+        height: 100%;
+        padding-inline-end: 18px;
+        overflow: hidden;
+        appearance: none;
+        background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='%238590a2' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'><path d='M3 4.5l3 3 3-3'/></svg>") no-repeat right center / 12px;
+        color: var(--j-text);
+        font-size: 14px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    [dir="rtl"] .filter-pill select {
+        background-position: left center;
+    }
+
+    .filter-pill select option {
+        background: var(--j-bg-raised);
+        color: var(--j-text);
+    }
+
+    #task-count {
+        flex-shrink: 0;
+        height: 28px;
+        padding: 0 10px;
+        border-radius: 999px;
+        background: var(--j-blue-subtle);
+        color: var(--j-blue-text);
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 28px;
+        white-space: nowrap;
+    }
+
+    #task-count:empty {
+        display: none;
+    }
+
+    .list-footer {
+        flex-wrap: wrap;
+        row-gap: 8px;
+    }
+
+    /* list.html table: each row becomes a two-line card so nothing overflows sideways
+         [✓] Title ............... [···]
+             Status  Priority  Due                                        */
+    #task-list,
+    #task-list tbody {
+        display: block;
+        width: 100%;
+    }
+
+    #task-list thead {
+        display: none;
+    }
+
+    #task-list tbody tr {
+        display: grid;
+        grid-template-columns: 28px auto auto 1fr 36px;
+        grid-template-areas:
+            "check title    title    title actions"
+            ".     status   priority due   .";
+        align-items: center;
+        column-gap: 8px;
+        row-gap: 4px;
+        padding: 10px 4px;
+        border-bottom: 1px solid var(--j-border);
+    }
+
+    #task-list tbody td {
+        min-width: 0;
+        padding: 0;
+        border: none;
+    }
+
+    #task-list tbody td:nth-child(1) { grid-area: check; }
+    #task-list tbody td:nth-child(2) { grid-area: title; }
+    #task-list tbody td:nth-child(3) { grid-area: status; }
+    #task-list tbody td:nth-child(4) { grid-area: priority; }
+    #task-list tbody td:nth-child(5) { grid-area: due; }
+    #task-list tbody td:nth-child(6) { grid-area: actions; }
+
+    #task-list .col-actions {
+        width: auto;
+    }
+
+    /* "No tasks found" spans the whole row */
+    #task-list tbody td.cell-empty {
+        grid-area: auto;
+        grid-column: 1 / -1;
+        padding: 16px 0;
+    }
+
+    #task-list .row-title {
+        flex-wrap: wrap;
+        row-gap: 2px;
+        overflow-wrap: anywhere;
+    }
+
+    /* the Due menu sits near the end of the row on phones, so open it toward the start */
+    #task-list .cell-due .row-menu {
+        inset-inline-start: auto;
+        inset-inline-end: 0;
+    }
+
+    #task-list .cell-due {
+        justify-self: start;
+    }
+
+    /* list.html filters: an even 2-column grid of pills (Status, Priority / Sort, Clear filters) */
+    .task-filters {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    .task-filters .filter-pill {
+        min-width: 0;
+    }
+
+    .task-filters #clear-filters {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 40px;
+        padding: 0 14px;
+        border: 1px solid var(--j-border);
+        border-radius: 8px;
+        background: var(--j-bg-neutral);
+        color: var(--j-text-subtle);
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+    .task-filters #clear-filters:hover {
+        border-color: var(--j-border-input);
+        background: var(--j-bg-neutral-hover);
+        color: var(--j-text);
+    }
+
+    /* pill-shaped segmented control; the active tab is a raised pill inside it */
+    .status-tabs {
+        display: flex;
+        gap: 2px;
+        /* full width, like the top bar's search pill */
+        width: 100%;
+        margin: 0 0 12px;
+        padding: 4px;
+        overflow-x: auto;
+        scrollbar-width: none;
+        border: 1px solid var(--j-border);
+        border-radius: 999px;
+        background: var(--j-bg-neutral);
+    }
+
+    .status-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .status-tab {
+        display: inline-flex;
+        flex: 1 0 auto;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        height: 36px;
+        padding: 0 16px;
+        border: none;
+        border-radius: 999px;
+        background: none;
+        color: var(--j-text-subtle);
+        font: inherit;
+        font-size: 14px;
+        font-weight: 500;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: background .15s, color .15s, box-shadow .15s;
+    }
+
+    .status-tab:hover {
+        color: var(--j-text);
+    }
+
+    .status-tab.is-active {
+        background: var(--j-bg-raised);
+        color: var(--j-text);
+        box-shadow: var(--j-shadow-card);
+    }
+
+    .status-tab-count {
+        min-width: 20px;
+        padding: 0 6px;
+        border-radius: 999px;
+        background: var(--j-bg-neutral);
+        color: var(--j-text-subtle);
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 20px;
+        text-align: center;
+    }
+
+    /* the board fills the rest of the screen under the top bar, filters and tabs */
+    .board:has(> .board-view) {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        min-height: 100dvh;
+    }
+
+    .board > .board-view {
+        flex: 1 0 auto;
+    }
+
     #task-board {
-        grid-template-columns: 1fr;
+        flex: 1 0 auto;
+        display: flex;
+        align-items: stretch;
+        gap: 12px;
+        /* bleed to the screen edges so the next card peeks in */
+        margin: 0 -16px;
+        padding: 0 16px 4px;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scroll-padding: 0 16px;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #task-board::-webkit-scrollbar {
+        display: none;
     }
 
     .column {
+        flex: 0 0 calc(100% - 24px);
         height: auto;
-        min-height: 0;
+        min-height: 240px;
+        padding: 8px;
+        border: 1px solid var(--j-border);
+        border-radius: 8px;
+        box-shadow: var(--j-shadow-card);
+        scroll-snap-align: start;
     }
 
     .column-content {
+        flex: 0 0 auto;
         overflow-y: visible;
+    }
+
+    /* "+ Add task" stretches over the empty space under the cards as a ghost card; tapping it opens New task */
+    .column .add-task {
+        display: flex;
+        flex: 1 0 96px;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        height: auto;
+        margin-top: 4px;
+        border: 2px dashed var(--j-border);
+        border-radius: 8px;
+        background: var(--j-bg-neutral);
+        color: var(--j-text-subtlest);
+        font-size: 14px;
+        opacity: 1;
+    }
+
+    .column .add-task:hover,
+    .column .add-task:active {
+        border-color: var(--j-blue);
+        background: var(--j-blue-subtle);
+        color: var(--j-blue-text);
+    }
+
+    /* list: descriptions are hidden until the task is tapped */
+    tr.has-desc .cell-title {
+        cursor: pointer;
+    }
+
+    .row-expand {
+        display: inline-flex;
+    }
+
+    tr:not(.is-expanded) .row-desc {
+        display: none;
+    }
+
+    tr.is-expanded .row-desc {
+        margin: 6px 0 0;
+        white-space: pre-line;
     }
 
     .add-task {
         opacity: 1;
     }
 
+    /* phones: two rows. ☰ + logo on the start side, theme + main action on the end side,
+       then a full-width search pill. Controls are pill-shaped. */
     .topbar {
         position: static;
         height: auto;
-        padding: 8px 16px;
+        flex-wrap: wrap;
+        gap: 10px 8px;
+        padding: 10px 16px 12px;
+        border-bottom: 1px solid var(--j-border);
+        background: var(--j-bg);
     }
 
     .view-tab {
         height: 40px;
+    }
+
+    .topbar #task-label {
+        margin-inline-end: 0;
+        font-size: 17px;
+    }
+
+    .topbar .sidebar-menu-btn {
+        width: 36px;
+        height: 36px;
+        margin: 0;
+        border-radius: 50%;
+    }
+
+    .topbar #theme-toggle {
+        order: 1;
+        width: 36px;
+        height: 36px;
+        margin: 0;
+        margin-inline-start: auto;
+        border: 1px solid var(--j-border);
+        border-radius: 50%;
+        background: var(--j-bg-neutral);
+    }
+
+    .topbar .sidebar-menu-btn:hover,
+    .topbar #theme-toggle:hover {
+        background: var(--j-bg-neutral-hover);
+        color: var(--j-text);
+    }
+
+    /* the main action is a high-contrast pill, like a call-to-action */
+    .topbar #new-task-btn {
+        order: 2;
+        display: inline-flex;
+        align-items: center;
+        height: 36px;
+        padding: 0 16px;
+        margin: 0;
+        border-radius: 999px;
+        background: var(--j-text);
+        color: var(--j-bg);
+        font-weight: 600;
+        box-shadow: var(--j-shadow-card);
+    }
+
+    .topbar #new-task-btn:hover {
+        background: var(--j-text-subtle);
+        color: var(--j-bg);
+    }
+
+    .topbar #search {
+        order: 3;
+        width: 100%;
+        height: 40px;
+        margin: 0;
+        padding: 0 16px 0 38px;
+        border: 1px solid var(--j-border);
+        border-radius: 999px;
+        background-color: var(--j-bg-neutral);
+        background-position: 16px center;
+        font-size: 14px;
+    }
+
+    .topbar #search:focus {
+        border-color: var(--j-blue);
+        box-shadow: 0 0 0 3px var(--j-blue-subtle);
+        background-color: var(--j-bg);
+    }
+
+    [dir="rtl"] .topbar #search {
+        padding: 0 38px 0 16px;
+        background-position: right 16px center;
     }
 }
 
@@ -1553,4 +1987,84 @@ th[aria-sort="none"] .sort-arrow {
 #new-task-btn,
 #new-task-btn:hover {
     color: var(--j-on-bold);
+}
+
+/* ================= buttons: one shared style =================
+   Every button follows the sidebar's Log out button: 8px corners, a 1px outline in the button's color
+   and a light tint of it; primary and danger buttons fill solid on hover. Kept last so it wins
+   over the older per-button rules above (and in style.css / screens.css). */
+
+.btn,
+#new-task-btn,
+.topbar #new-task-btn,
+#theme-toggle,
+.topbar #theme-toggle,
+.sidebar-menu-btn,
+.topbar .sidebar-menu-btn,
+.btn-link-danger {
+    border-radius: 8px;
+}
+
+.btn {
+    border: 1px solid var(--j-border);
+    background: var(--j-bg-neutral);
+    color: var(--j-text-subtle);
+}
+
+.btn:hover {
+    border-color: var(--j-border-input);
+    background: var(--j-bg-neutral-hover);
+    color: var(--j-text);
+}
+
+.btn-primary,
+#new-task-btn,
+.topbar #new-task-btn {
+    border: 1px solid var(--j-blue);
+    background: var(--j-blue-subtle);
+    color: var(--j-blue-text);
+    box-shadow: none;
+}
+
+.btn-primary:hover,
+#new-task-btn:hover,
+.topbar #new-task-btn:hover {
+    border-color: var(--j-blue);
+    background: var(--j-blue);
+    color: var(--j-on-bold);
+}
+
+/* the top bar's Log out matches the red one in the sidebar */
+.btn-danger,
+#logout-btn,
+.btn-link-danger {
+    border: 1px solid var(--j-red);
+    background: var(--j-red-subtle);
+    color: var(--j-red-text);
+}
+
+.btn-danger:hover,
+#logout-btn:hover,
+.btn-link-danger:hover {
+    border-color: var(--j-red);
+    background: var(--j-red);
+    color: var(--j-on-bold);
+}
+
+/* text-only buttons (Cancel, Clear filters) get the neutral outline too */
+.btn-link {
+    border: 1px solid var(--j-border);
+    background: transparent;
+    color: var(--j-blue-text);
+}
+
+.btn-link:hover {
+    background: var(--j-bg-neutral-hover);
+    color: var(--j-blue-text);
+    text-decoration: none;
+}
+
+#theme-toggle,
+.topbar #theme-toggle {
+    border: 1px solid var(--j-border);
 }

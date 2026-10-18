@@ -295,6 +295,61 @@
     cursor: pointer;
 }
 
+/* ---------- who messaged you: stacked avatars + count ---------- */
+
+.senders-summary {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--j-border, #eef0f5);
+    background: var(--j-blue-subtle, #e9f2ff);
+    color: var(--j-blue-text, #0c66e4);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.senders-summary[hidden] {
+    display: none;
+}
+
+.sender-avatars {
+    display: inline-flex;
+    flex-shrink: 0;
+}
+
+.sender-avatar {
+    position: relative;
+    display: inline-flex;
+    padding: 0;
+    border: 2px solid var(--j-bg-raised, #fff);
+    border-radius: 50%;
+    background: none;
+    cursor: pointer;
+}
+
+/* overlap like a stack, the newest sender on top */
+.sender-avatar + .sender-avatar {
+    margin-inline-start: -8px;
+}
+
+.sender-avatar:nth-child(1) { z-index: 3; }
+.sender-avatar:nth-child(2) { z-index: 2; }
+.sender-avatar:nth-child(3) { z-index: 1; }
+
+.sender-avatar .j-avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
+}
+
+.senders-text {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 /* ---------- phones: show the list or the thread, not both ---------- */
 
 @media (max-width: 700px) {

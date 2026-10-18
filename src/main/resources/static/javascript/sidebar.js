@@ -70,6 +70,24 @@ function sidebarItemHtml(item) {
     </li>`
 }
 
+// Language, username and Log out at the very bottom. Only shown on small screens (see sidebar.css),
+// where they replace the language picker and Log out button in the top bar.
+function sidebarAccountHtml() {
+  const languages = Object.entries(LANGUAGES)
+    .map(([code, {name}]) => `<option value="${code}" ${code === currentLang ? 'selected' : ''}>${name}</option>`)
+    .join('')
+  return `
+    <div class="sidebar-account" role="group" aria-label="${escapeHtml(t('sidebar.account'))}">
+      <select class="sidebar-lang" id="sidebar-lang" title="${escapeHtml(t('lang.label'))}"
+              aria-label="${escapeHtml(t('lang.label'))}">${languages}</select>
+      <div class="sidebar-user">
+        <span id="sidebar-avatar">${avatarHtml('?')}</span>
+        <span class="sidebar-username" id="sidebar-username"></span>
+        <button type="button" class="sidebar-logout" id="sidebar-logout">${escapeHtml(t('nav.logout'))}</button>
+      </div>
+    </div>`
+}
+
 function buildSidebar() {
   const nav = document.createElement('nav')
   nav.className = 'sidebar'
@@ -91,6 +109,7 @@ function buildSidebar() {
         </div>`).join('')}
     </div>
     <ul class="sidebar-footer">${SIDEBAR_FOOTER.map(sidebarItemHtml).join('')}</ul>
+    ${sidebarAccountHtml()}
     <button type="button" class="sidebar-collapse" id="sidebar-collapse">${sidebarIcon('collapse')}</button>`
 
   const backdrop = document.createElement('div')
@@ -129,9 +148,15 @@ function buildSidebar() {
     if (event.key === 'Escape') closeMobileSidebar()
   })
 
+  document.getElementById('sidebar-lang').addEventListener('change', event => setLanguage(event.target.value))
+  document.getElementById('sidebar-logout').addEventListener('click', logout)
+
   // the Users link is only for admins
   currentUserReady.then(() => {
     if (isAdmin()) nav.querySelectorAll('.sidebar-admin-only').forEach(el => { el.hidden = false })
+    if (!currentUser) return
+    document.getElementById('sidebar-username').textContent = currentUser.username
+    document.getElementById('sidebar-avatar').innerHTML = avatarHtml(currentUser.username)
   })
 }
 

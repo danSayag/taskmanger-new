@@ -53,6 +53,22 @@
                 <span id="task-count"></span>
             </div>
 
+            <!-- small screens: tabs that scroll the board to a status (see wireStatusTabs in script.js) -->
+            <nav class="status-tabs" id="status-tabs" aria-label="Task status">
+                <button type="button" class="status-tab is-active" data-column="todo" aria-current="true">
+                    <span data-i18n="status.todo">To do</span>
+                    <span class="status-tab-count" id="todo-tab-count">0</span>
+                </button>
+                <button type="button" class="status-tab" data-column="inprogress">
+                    <span data-i18n="status.inprogress">In progress</span>
+                    <span class="status-tab-count" id="inprogress-tab-count">0</span>
+                </button>
+                <button type="button" class="status-tab" data-column="done">
+                    <span data-i18n="status.done">Done</span>
+                    <span class="status-tab-count" id="done-tab-count">0</span>
+                </button>
+            </nav>
+
             <div id="task-board">
                 <section class="column" data-status="todo">
                     <header class="column-head">
