@@ -1713,13 +1713,11 @@ th[aria-sort="none"] .sort-arrow {
         flex: 1 0 auto;
         display: flex;
         align-items: stretch;
-        gap: 12px;
-        /* bleed to the screen edges so the next card peeks in */
-        margin: 0 -16px;
-        padding: 0 16px 4px;
+        /* one card at a time, filling the width between the page's 16px gutters (same as the tabs above) */
+        gap: 16px;
+        padding-bottom: 4px;
         overflow-x: auto;
         scroll-snap-type: x mandatory;
-        scroll-padding: 0 16px;
         scrollbar-width: none;
         -webkit-overflow-scrolling: touch;
     }
@@ -1729,14 +1727,14 @@ th[aria-sort="none"] .sort-arrow {
     }
 
     .column {
-        flex: 0 0 calc(100% - 24px);
+        flex: 0 0 100%;
         height: auto;
         min-height: 240px;
         padding: 8px;
         border: 1px solid var(--j-border);
         border-radius: 8px;
         box-shadow: var(--j-shadow-card);
-        scroll-snap-align: start;
+        scroll-snap-align: center;
     }
 
     .column-content {
