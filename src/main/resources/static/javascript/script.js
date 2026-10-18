@@ -68,6 +68,7 @@ function renderTasks() {
     const inColumn = tasks.filter(task => statusKey(task) === column)
     document.getElementById(`${column}-content`).innerHTML = inColumn.map(cardHtml).join('')
     document.getElementById(`${column}-count`).textContent = inColumn.length
+    document.getElementById(`${column}-tab-count`).textContent = inColumn.length
   }
   document.getElementById('task-count').textContent = tn('count.task', tasks.length)
 }
@@ -127,13 +128,64 @@ board.addEventListener('drop', event => {
   moveTask(Number(event.dataTransfer.getData('text/plain')), column.dataset.status)
 })
 
+// ---------- status tabs (small screens) ----------
+
+// On phones the columns sit side by side as cards that you swipe between (see .status-tabs in jira.css).
+// Tapping a tab scrolls to its column; the tab of the column in view is highlighted.
+function wireStatusTabs() {
+  const nav = document.getElementById('status-tabs')
+  nav.setAttribute('aria-label', t('board.statuses'))
+  const tabs = [...nav.querySelectorAll('.status-tab')]
+  const rtl = document.documentElement.dir === 'rtl'
+
+  function setActive(column) {
+    for (const tab of tabs) {
+      const active = tab.dataset.column === column
+      tab.classList.toggle('is-active', active)
+      if (active) tab.setAttribute('aria-current', 'true')
+      else tab.removeAttribute('aria-current')
+    }
+    // keep the active tab visible when the tabs don't all fit (sideways only, so the page doesn't jump)
+    const tab = tabs.find(tab => tab.dataset.column === column).getBoundingClientRect()
+    const box = nav.getBoundingClientRect()
+    if (tab.left < box.left) nav.scrollBy({left: tab.left - box.left})
+    else if (tab.right > box.right) nav.scrollBy({left: tab.right - box.right})
+  }
+
+  nav.addEventListener('click', event => {
+    const tab = event.target.closest('.status-tab')
+    if (!tab) return
+    const column = board.querySelector(`.column[data-status="${tab.dataset.column}"]`).getBoundingClientRect()
+    const box = board.getBoundingClientRect()
+    board.scrollBy({left: rtl ? column.right - box.right : column.left - box.left, behavior: 'smooth'})
+    setActive(tab.dataset.column)
+  })
+
+  // only fires while the board scrolls sideways, i.e. on phones
+  const observer = new IntersectionObserver(entries => {
+    for (const entry of entries) {
+      if (entry.isIntersecting) setActive(entry.target.dataset.status)
+    }
+  }, {root: board, threshold: 0.6})
+  board.querySelectorAll('.column').forEach(column => observer.observe(column))
+}
+
 // ---------- wiring ----------
+
+wireStatusTabs()
 
 board.addEventListener('click', event => {
   const menu = event.target.closest('.card-menu')
   if (menu) openEdit(Number(menu.dataset.id))
   const badge = event.target.closest('.badge-button')
   if (badge) cyclePriority(Number(badge.dataset.id))
+  // "+ Add task" (on phones, the empty space under a column's cards) starts the task in that column
+  const add = event.target.closest('.add-task')
+  if (add) document.getElementById('new-status').value = STATUS_BY_COLUMN[add.closest('.column').dataset.status]
+})
+// the top bar's "+ New task" always starts in To do
+document.getElementById('new-task-btn').addEventListener('click', () => {
+  document.getElementById('new-status').value = 'TODO'
 })
 wireSearch(renderTasks)
 for (const id of ['priority-selector', 'Due']) {

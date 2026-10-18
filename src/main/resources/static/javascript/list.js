@@ -1,6 +1,8 @@
 // List page. Shared API/create/edit/delete code lives in common.js.
 
 let page = 1
+// rows whose description is open; on small screens descriptions are hidden until the row is tapped
+const expanded = new Set()
 
 const STATUS_LABELS = {todo: t('status.TODO'), inprogress: t('status.IN_PROGRESS'), done: t('status.DONE')}
 const PRIORITY_ORDER = {HIGH: 0, MEDIUM: 1, LOW: 2}
@@ -113,13 +115,21 @@ function dueMenu(task) {
 function rowHtml(task) {
   const status = statusKey(task)
   const done = status === 'done'
-  const desc = task.description ? `<p class="row-desc">${escapeHtml(task.description)}</p>` : ''
+  const open = expanded.has(task.taskId)
+  const desc = task.description
+    ? `<p class="row-desc" id="desc-${task.taskId}">${escapeHtml(task.description)}</p>`
+    : ''
+  const toggle = task.description
+    ? `<button type="button" class="row-expand" aria-expanded="${open}" aria-controls="desc-${task.taskId}"
+               title="${t('list.toggleDesc')}" aria-label="${t('list.toggleDesc')}">&#9662;</button>`
+    : ''
+  const classes = [done && 'is-done', task.description && 'has-desc', open && 'is-expanded'].filter(Boolean).join(' ')
   return `
-    <tr class="${done ? 'is-done' : ''}">
+    <tr class="${classes}" data-id="${task.taskId}">
       <td class="col-check"><input type="checkbox" class="row-check" data-id="${task.taskId}" ${done ? 'checked' : ''}
                                    title="${t(done ? 'list.markTodo' : 'list.markDone')}"></td>
-      <td>
-        <p class="row-title">${issueKey(task)} ${escapeHtml(task.title)} ${ownerTag(task)}</p>
+      <td class="cell-title">
+        <p class="row-title">${issueKey(task)} ${escapeHtml(task.title)} ${ownerTag(task)} ${toggle}</p>
         ${desc}
       </td>
       <td>${statusMenu(task)}</td>
@@ -217,6 +227,17 @@ document.querySelector('#task-list tbody').addEventListener('click', event => {
   if (due) {
     closeHoverMenu()
     setDueDate(Number(due.dataset.id), due.dataset.date)
+    return
+  }
+  // tapping a task's title shows or hides its description (small screens; on desktop it is always shown)
+  const row = event.target.closest('tr.has-desc')
+  if (row && event.target.closest('.cell-title')) {
+    const taskId = Number(row.dataset.id)
+    const open = !expanded.has(taskId)
+    if (open) expanded.add(taskId)
+    else expanded.delete(taskId)
+    row.classList.toggle('is-expanded', open)
+    row.querySelector('.row-expand').setAttribute('aria-expanded', String(open))
   }
 })
 

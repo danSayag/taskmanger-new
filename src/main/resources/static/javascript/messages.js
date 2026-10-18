@@ -43,6 +43,8 @@ async function loadUsers() {
     users = []
   }
   renderUserPicker()
+  // names in the list and the senders summary come from `users`
+  renderConversations()
 }
 
 async function loadConvos({scrollToEnd = false} = {}) {
@@ -155,7 +157,35 @@ function renderUserPicker() {
     users.map(u => `<option value="${u.id}">${escapeHtml(u.username)}</option>`).join('')
 }
 
+// everyone who sent you a message, the most recent sender first
+function sendersToMe() {
+  const latest = new Map()   // senderId -> newest messageId from them
+  for (const convo of convos) {
+    for (const m of convo.messages || []) {
+      if (m.receiverId !== currentUser?.id || m.senderId === currentUser?.id) continue
+      latest.set(m.senderId, Math.max(latest.get(m.senderId) ?? 0, m.messageId))
+    }
+  }
+  return [...latest.entries()].sort((a, b) => b[1] - a[1]).map(([senderId]) => senderId)
+}
+
+// "3 people messaged you" with the avatars of the last 3; tapping an avatar opens that conversation
+function renderSenders() {
+  const box = document.getElementById('senders-summary')
+  const senders = sendersToMe()
+  box.hidden = !senders.length
+  if (!senders.length) return
+  const avatars = senders.slice(0, 3).map(id => `
+    <button type="button" class="sender-avatar" data-user="${id}" title="${escapeHtml(nameOf(id))}">
+      ${avatarHtml(nameOf(id))}
+    </button>`).join('')
+  box.innerHTML = `
+    <span class="sender-avatars">${avatars}</span>
+    <span class="senders-text">${escapeHtml(tn('msg.senders', senders.length))}</span>`
+}
+
 function renderConversations() {
+  renderSenders()
   const query = document.getElementById('search').value.trim().toLowerCase()
   const shown = convos
     .filter(c => !query || titleOf(c).toLowerCase().includes(query))
@@ -329,6 +359,11 @@ document.getElementById('conversation-list').addEventListener('click', event => 
   const item = event.target.closest('.conversation')
   if (!item) return
   if (item.dataset.id) openConvo(Number(item.dataset.id))
+})
+
+document.getElementById('senders-summary').addEventListener('click', event => {
+  const avatar = event.target.closest('.sender-avatar')
+  if (avatar) openWithUser(Number(avatar.dataset.user))
 })
 
 document.getElementById('new-conversation').addEventListener('change', event => {

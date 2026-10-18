@@ -28,7 +28,7 @@
 
         <div class="list-view">
 
-            <div class="list-toolbar">
+            <div class="list-toolbar task-filters">
                 <div class="filter-pill">
                     <span data-i18n="filter.status">Status</span>
                     <select id="list-status">
@@ -57,7 +57,6 @@
                     </select>
                 </div>
                 <a href="#" id="clear-filters" class="btn btn-link" data-i18n="btn.clearFilters">Clear filters</a>
-                <span id="result-count"></span>
             </div>
 
             <table id="task-list">
@@ -81,6 +80,7 @@
             </table>
 
             <div class="list-footer">
+                <span id="result-count"></span>
                 <span class="rows-per-page">
                     <span data-i18n="list.rowsPerPage">Rows per page:</span>
                     <select id="rows-per-page">

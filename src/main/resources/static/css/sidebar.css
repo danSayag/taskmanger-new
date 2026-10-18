@@ -160,6 +160,70 @@ body.has-sidebar .topbar .view-tab {
     border-top: 1px solid var(--j-border, #dcdfe4);
 }
 
+/* ---------- account: language, username, log out (small screens only) ---------- */
+
+.sidebar-account {
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px;
+    border-top: 1px solid var(--j-border, #dcdfe4);
+}
+
+.sidebar-lang {
+    width: 100%;
+    height: 32px;
+    padding: 0 8px;
+    border: 1px solid var(--j-border, #dcdfe4);
+    border-radius: 3px;
+    background: var(--j-bg, #fff);
+    color: var(--j-text, #172b4d);
+    font: inherit;
+    font-size: 14px;
+}
+
+.sidebar-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 36px;
+}
+
+.sidebar-user #sidebar-avatar {
+    display: inline-flex;
+    flex-shrink: 0;
+}
+
+.sidebar-username {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    color: var(--j-text, #172b4d);
+    font-size: 14px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sidebar-logout {
+    flex-shrink: 0;
+    height: 32px;
+    padding: 0 12px;
+    border: 1px solid var(--j-red, #c9372c);
+    border-radius: 8px;
+    background: var(--j-red-subtle, #ffeceb);
+    color: var(--j-red-text, #ae2e24);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.sidebar-logout:hover {
+    background: var(--j-red, #c9372c);
+    color: var(--j-on-bold, #fff);
+}
+
 /* ---------- collapse button (sits on the sidebar's edge) ---------- */
 
 .sidebar-collapse {
@@ -297,6 +361,16 @@ body.sidebar-collapsed .sidebar-collapse .sidebar-icon {
     }
 
     .sidebar-collapse {
+        display: none;
+    }
+
+    /* language and log out move from the top bar to the bottom of the sidebar */
+    .sidebar-account {
+        display: flex;
+    }
+
+    body.has-sidebar .topbar #lang-picker,
+    body.has-sidebar .topbar #logout-btn {
         display: none;
     }
 

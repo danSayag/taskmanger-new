@@ -79,6 +79,7 @@ const TRANSLATIONS = {
     'sidebar.collapse': 'Collapse sidebar',
     'sidebar.expand': 'Expand sidebar',
     'sidebar.menu': 'Menu',
+    'sidebar.account': 'Account',
     'soon.title': 'Coming soon',
     'soon.backlog': 'Plan upcoming work: rank tasks and move them onto the board when you are ready.',
     'soon.timeline': 'See tasks on a calendar timeline by their due dates.',
@@ -204,6 +205,8 @@ const TRANSLATIONS = {
     'list.edit': 'Edit',
     'list.delete': 'Delete',
     'list.actions': 'More actions',
+    'list.toggleDesc': 'Show or hide the description',
+    'board.statuses': 'Task status',
     'pager.prev': '‹ Prev',
     'pager.next': 'Next ›',
 
@@ -266,6 +269,8 @@ const TRANSLATIONS = {
     'msg.noConversations': 'No conversations yet',
     'msg.sending': 'Sending…',
     'msg.sayHello': 'No messages yet. Say hello!',
+    'msg.senders.one': '{count} person messaged you',
+    'msg.senders.other': '{count} people messaged you',
 
     'auth.login': 'Log in',
     'auth.usernameOrEmail': 'Username or email',
@@ -322,6 +327,7 @@ const TRANSLATIONS = {
     'sidebar.collapse': 'Réduire la barre latérale',
     'sidebar.expand': 'Développer la barre latérale',
     'sidebar.menu': 'Menu',
+    'sidebar.account': 'Compte',
     'soon.title': 'Bientôt disponible',
     'soon.backlog': 'Planifiez le travail à venir : classez les tâches et placez-les sur le tableau quand vous êtes prêt.',
     'soon.timeline': 'Visualisez les tâches sur une chronologie selon leurs échéances.',
@@ -447,6 +453,8 @@ const TRANSLATIONS = {
     'list.edit': 'Modifier',
     'list.delete': 'Supprimer',
     'list.actions': 'Plus d’actions',
+    'list.toggleDesc': 'Afficher ou masquer la description',
+    'board.statuses': 'Statut des tâches',
     'pager.prev': '‹ Préc.',
     'pager.next': 'Suiv. ›',
 
@@ -509,6 +517,8 @@ const TRANSLATIONS = {
     'msg.noConversations': 'Aucune conversation pour le moment',
     'msg.sending': 'Envoi…',
     'msg.sayHello': 'Aucun message pour le moment. Dites bonjour !',
+    'msg.senders.one': '{count} personne vous a écrit',
+    'msg.senders.other': '{count} personnes vous ont écrit',
 
     'auth.login': 'Se connecter',
     'auth.usernameOrEmail': 'Nom d’utilisateur ou e-mail',
@@ -565,6 +575,7 @@ const TRANSLATIONS = {
     'sidebar.collapse': 'כיווץ סרגל הצד',
     'sidebar.expand': 'הרחבת סרגל הצד',
     'sidebar.menu': 'תפריט',
+    'sidebar.account': 'חשבון',
     'soon.title': 'בקרוב',
     'soon.backlog': 'תכננו את העבודה הבאה: דרגו משימות והעבירו אותן ללוח כשתהיו מוכנים.',
     'soon.timeline': 'צפו במשימות על ציר זמן לפי תאריכי היעד שלהן.',
@@ -690,6 +701,8 @@ const TRANSLATIONS = {
     'list.edit': 'עריכה',
     'list.delete': 'מחיקה',
     'list.actions': 'פעולות נוספות',
+    'list.toggleDesc': 'הצגה או הסתרה של התיאור',
+    'board.statuses': 'סטטוס משימות',
     'pager.prev': '› הקודם',
     'pager.next': 'הבא ‹',
 
@@ -752,6 +765,8 @@ const TRANSLATIONS = {
     'msg.noConversations': 'אין עדיין שיחות',
     'msg.sending': 'בשליחה…',
     'msg.sayHello': 'אין עדיין הודעות. אמרו שלום!',
+    'msg.senders.one': 'אדם אחד שלח לך הודעה',
+    'msg.senders.other': '{count} אנשים שלחו לך הודעות',
 
     'auth.login': 'התחברות',
     'auth.usernameOrEmail': 'שם משתמש או אימייל',
